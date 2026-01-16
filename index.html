@@ -283,10 +283,83 @@
 
         /* 隐藏废弃元素 */
         .arrow-container, .gradient-arrow, .synergy-stage, .particles, .waves-container { display: none; }
+        /* --- 左侧导航栏样式 (全屏高度版) --- */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;                 /* 贴紧左侧边缘 */
+            top: 0;                  /* 从屏幕最顶端开始 */
+            bottom: 0;               /* 延伸到屏幕最底端 */
+            height: 100vh;           /* 强制全屏高度 */
+            width: 260px;            /* 导航栏宽度 */
+
+            background: #fff;        /* 背景色 */
+            border-right: 2px solid #000; /* 【修改点】改为黑色实线，贯穿上下 */
+
+            /* 【修改点】顶部增加内边距，让“目录导航”几个字位置适中，不贴顶 */
+            padding: 120px 20px 20px 40px;
+
+            overflow-y: auto;        /* 内容过多时允许内部滚动 */
+            display: none;           /* 默认隐藏 */
+            z-index: 100;
+        }
+
+        /* 屏幕宽度足够大时才显示 */
+        @media (min-width: 1300px) {
+            .sidebar { display: block; }
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #000;
+            border-bottom: 2px solid #000; /* 标题下的线也改为黑色 */
+            padding-bottom: 10px;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* ... 其余 .nav-link, .level-1, .level-2 样式保持不变 ... */
+        .nav-list li { margin-bottom: 8px; }
+        .nav-link { display: block; color: #555; font-size: 0.9rem; padding: 4px 0; transition: color 0.2s; text-decoration: none; }
+        .nav-link:hover { color: var(--primary-blue); text-decoration: none; font-weight: 600; }
+        .level-1 { font-weight: 600; margin-top: 15px; color: #333; }
+        .level-2 { padding-left: 15px; font-size: 0.85rem; color: #777; border-left: 2px solid #eee; }
+        .level-2:hover { border-left-color: var(--primary-blue); }
     </style>
 </head>
 <body>
+<!-- 左侧悬浮导航栏 -->
+<nav class="sidebar">
+    <div class="sidebar-title">导航栏</div>
+    <ul class="nav-list">
+        <li><a href="#sec-1" class="nav-link level-1">一、研究背景</a></li>
 
+        <li><a href="#sec-2" class="nav-link level-1">二、研究方法</a></li>
+        <li><a href="#sec-2-1" class="nav-link level-2">1. 热力学建模</a></li>
+        <li><a href="#sec-2-2" class="nav-link level-2">2. 故障建模</a></li>
+        <li><a href="#sec-2-3" class="nav-link level-2">3. 选择参数</a></li>
+        <li><a href="#sec-2-4" class="nav-link level-2">4. 故障识别</a></li>
+
+        <li><a href="#sec-3" class="nav-link level-1">三、数据与仿真</a></li>
+        <li><a href="#sec-3-1" class="nav-link level-2">1. 实验数据集</a></li>
+        <li><a href="#sec-3-2" class="nav-link level-2">2. 仿真结果</a></li>
+
+        <li><a href="#sec-4" class="nav-link level-1">四、研究成果</a></li>
+        <li><a href="#sec-4-1" class="nav-link level-2">1. 筛选参数</a></li>
+        <li><a href="#sec-4-2" class="nav-link level-2">2. 效果对比</a></li>
+
+        <li><a href="#sec-5" class="nav-link level-1">五、亮点—可解释性</a></li>
+        <li><a href="#sec-6" class="nav-link level-1">原始文献</a></li>
+    </ul>
+</nav>
 <header id="header">
     <!-- 修改1：添加 max-width: 1200px，让头部容器比正文(900px)更宽，容纳长标题 -->
     <div class="container" style="padding-bottom: 0; max-width: 1200px;">
@@ -329,7 +402,7 @@
     <!-- 一、研究背景 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2>一、研究背景</h2>
+            <h2 id="sec-1">一、研究背景</h2>
         </div>
         <div class="text-content">
             <p>在船用柴油机的故障诊断领域，主要有以下问题：</p>
@@ -347,11 +420,11 @@
     <!-- 二、研究方法 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2>二、研究方法</h2>
+            <h2 id="sec-2">二、研究方法</h2>
         </div>
         <div class="text-content">
 
-            <h3>1. 热力学建模</h3>
+            <h3 id="sec-2-1">1. 热力学建模</h3>
             <p>构建柴油机一维热力学模型，主要用于模拟故障状态并生成训练数据。该模型建立了六个监测点（MP1至MP6）以获取相关的热力学参数，通过后续与来源于数据采集模块（DCM）的真实船舶航行数据校准，该模型的热力学参数在仿真条件下与真实测量偏差小于5%，这种一致性验证了模型的可靠性。</p>
 
             <!-- 修改重点：200px高度，防止溢出 -->
@@ -366,7 +439,7 @@
                 </div>
             </div>
 
-            <h3>2. 故障建模</h3>
+            <h3 id="sec-2-2">2. 故障建模</h3>
             <p>基于建立好的柴油机一维热力学模型，通过微调参数将燃烧室组件的健康状态设定为正常状态（F0）、气缸盖开裂（F1）、活塞烧蚀（F2）、缸套磨损（F3）、活塞环磨损（F4）和活塞环粘着（F5）六个不同状态，从而生成五种不同故障的高保真数据集。</p>
 
             <div class="media-container">
@@ -374,7 +447,7 @@
                 <span class="caption">表1 故障状态细节</span>
             </div>
 
-            <h3>3. 选择参数</h3>
+            <h3 id="sec-2-3">3. 选择参数</h3>
             <p>首先由构建的柴油机一维热力学模型输出14个具有显著状态评估诊断潜力的热力学参数，随后通过计算SHAP值量化这些参数的重要性并进行排序，将前8个重要特征参数组成优化子集。</p>
 
             <div class="media-container">
@@ -382,7 +455,7 @@
                 <span class="caption">图3 基于SHAP的参数选择过程</span>
             </div>
 
-            <h3>4. 故障识别</h3>
+            <h3 id="sec-2-4">4. 故障识别</h3>
             <p>将包含8个热力学参数的精炼子集输入至随机森林分类器（RF）进行故障诊断，该模型在样本有限的情况下表现出较高的诊断分类能力。</p>
 
             <div class="media-container">
@@ -395,14 +468,14 @@
     <!-- 三、数据与仿真 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2>三、数据与仿真</h2>
+            <h2 id="sec-3">三、数据与仿真</h2>
         </div>
         <div class="text-content">
 
-            <h3>1. 实验数据集</h3>
+            <h3 id="sec-3-1">1. 实验数据集</h3>
             <p>从构建的柴油机一维热力学模型完整运行周期的仿真结果中提取，样本比例按照训练：测试=7：3。该数据集涵盖了不同工况下的丰富样本，确保了模型训练的鲁棒性。</p>
 
-            <h3>2. 仿真结果</h3>
+            <h3 id="sec-3-2">2. 仿真结果</h3>
             <p>识别出14个具有显著状态评估诊断潜力的热力学参数，例如气缸压力、气缸温度、活塞壁热流等。下图展示气缸压力、气缸温度、活塞壁热流在不同健康状态下的变化：</p>
 
             <div class="media-container">
@@ -416,11 +489,11 @@
     <!-- 四、研究成果 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2>四、研究成果</h2>
+            <h2 id="sec-4">四、研究成果</h2>
         </div>
         <div class="text-content">
 
-            <h3>1. 筛选参数</h3>
+            <h3 id="sec-4-1">1. 筛选参数</h3>
             <p>从14个热力学参数中，基于SHAP值选取重要性最高且最具评估意义的8个参数用于故障诊断。</p>
 
             <div class="media-container">
@@ -443,7 +516,7 @@
                 *筛选出的8个关键热力学参数实时协同输入,驱动模型实现可解释性诊断*
             </p>
 
-            <h3>2. 效果对比</h3>
+            <h3 id="sec-4-2">2. 效果对比</h3>
 
             <p style="font-weight: 700; margin-top: 20px;">(1) 分类器对比</p>
             <p>基于随机森林（RF）分类器进行分类，在原始数据集和优化子集上与K近邻（KNN）分类器、支持向量机（SVM）对比6个健康状态的评估指标，包括精度、召回率、F1分数和准确率。结果表明，RF在实验构建的数据集中表现优于KNN和SVM。</p>
@@ -462,7 +535,7 @@
     <!-- 五、亮点——双尺度可解释性 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2>五、亮点——双尺度可解释性</h2>
+            <h2 id="sec-5">五、亮点——双尺度可解释性</h2>
         </div>
         <div class="text-content">
              <p>该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。</p>
@@ -478,10 +551,16 @@
         </div>
     </section>
 
-    <section class="section-card">
-        <h2 style="font-size: 1.2rem; border-bottom: none; margin-bottom: 15px;">原始文献</h2>
-        <div style="font-size: 0.95rem; color: #555; background: #f9f9f9; padding: 15px; border-radius: 4px;">
-            <p style="margin-bottom: 0;">C. Luo, M. Zhao, X. Fu, S. Zhong, S. Fu, K. Zhang, X. Yu. Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines[J]. Measurement, 2025, 251: 117252.</p>
+   <section class="section-card">
+        <!-- 使用与其他章节相同的标题包裹层，实现统一样式 -->
+        <div class="section-title-wrap">
+            <h2 id="sec-6">原始文献</h2>
+        </div>
+
+        <div class="text-content">
+            <div style="font-size: 0.95rem; color: #555; background: #f9f9f9; padding: 15px; border-radius: 4px;">
+                <p style="margin-bottom: 0;">C. Luo, M. Zhao, X. Fu, S. Zhong, S. Fu, K. Zhang, X. Yu. Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines[J]. Measurement, 2025, 251: 117252.</p>
+            </div>
         </div>
     </section>
 
