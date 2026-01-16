@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThermoRF: 船用柴油机故障诊断成果展示</title>
+    <title>可解释故障诊断：热力学仿真辅助随机森林</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FEQPNN1RXB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FEQPNN1RXB');
+    </script>
     <style>
         :root {
             --ocean-dark: #001f3f;
@@ -13,744 +21,670 @@
             --bg-light: #f8fafc;
             --card-shadow: 0 25px 60px rgba(0, 74, 153, 0.1);
         }
-code
-Code
-* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-        background-color: var(--bg-light);
-        background-image: radial-gradient(rgba(0, 74, 153, 0.08) 1.5px, transparent 0);
-        background-size: 30px 30px;
-        color: #334155;
-        overflow-x: hidden;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* --- 动态增强版页眉 --- */
-    header {
-        position: relative;
-        height: 750px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: white;
-        background: linear-gradient(160deg, var(--ocean-dark), var(--ocean-blue), var(--ocean-dark));
-        background-size: 400% 400%;
-        animation: gradientMove 15s ease infinite;
-        padding: 0 20px;
-        overflow: hidden;
-    }
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-light);
+            background-image: radial-gradient(rgba(0, 74, 153, 0.08) 1.5px, transparent 0);
+            background-size: 30px 30px;
+            color: #334155;
+            overflow-x: hidden;
+        }
 
-    @keyframes gradientMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+        /* --- 动态增强版页眉 --- */
+        header {
+            position: relative;
+            height: 750px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background: linear-gradient(160deg, var(--ocean-dark), var(--ocean-blue), var(--ocean-dark));
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            padding: 0 20px;
+            overflow: hidden;
+        }
 
-    .particles {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-    .particle {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        animation: float 10s infinite linear;
-    }
+        .particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-    @keyframes float {
-        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-        20% { opacity: 0.4; }
-        80% { opacity: 0.4; }
-        100% { transform: translateY(-700px) rotate(360deg); opacity: 0; }
-    }
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 10s infinite linear;
+        }
 
-    header::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 450px;
-        background: linear-gradient(to bottom,
-            rgba(0, 74, 153, 0) 0%,
-            rgba(0, 74, 153, 0.1) 20%,
-            rgba(248, 250, 252, 0.6) 55%,
-            rgba(248, 250, 252, 0.9) 85%,
-            var(--bg-light) 100%);
-        z-index: 2;
-    }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.4; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(-700px) rotate(360deg); opacity: 0; }
+        }
 
-    .header-content {
-        position: relative;
-        z-index: 10;
-        margin-top: -80px;
-    }
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(to bottom,
+                rgba(0, 74, 153, 0) 0%,
+                rgba(0, 74, 153, 0.1) 20%,
+                rgba(248, 250, 252, 0.6) 55%,
+                rgba(248, 250, 252, 0.9) 85%,
+                var(--bg-light) 100%);
+            z-index: 2;
+        }
 
-    /* 修改 header h1 样式以支持双行布局 */
-    header h1 {
-        /* 稍微调小最大字号，确保长文字能一行显示 */
-        font-size: clamp(1.8rem, 5vw, 3.6rem);
-        font-weight: 900;
-        letter-spacing: 4px; /* 字数变多，字间距稍微收一点 */
-        margin-bottom: 25px; /* 增加底部间距 */
-        text-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        line-height: 1.4; /* 增加行高，让两行文字不拥挤 */
-        opacity: 0;
-        transform: translateY(30px);
-        animation: slideUpFade 1s ease forwards 0.3s;
-        max-width: 1200px; /* 限制最大宽度 */
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .header-content {
+            position: relative;
+            z-index: 10;
+            margin-top: -80px;
+        }
 
-    /* 删除了 header p 的样式，因为文字合并到 h1 了 */
+        header h1 {
+            font-size: clamp(1.8rem, 5vw, 3.6rem);
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            text-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 1s ease forwards 0.3s;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    header .title-line {
-        width: 160px;
-        height: 10px;
-        background: var(--vibrant-orange);
-        margin: 30px auto;
-        border-radius: 20px;
-        box-shadow: 0 0 25px rgba(255, 140, 0, 0.6);
-        animation: pulse 3s infinite ease-in-out, slideUpFade 1s ease forwards 0.5s;
-        opacity: 0;
-        transform: translateY(30px);
-    }
+        header .title-line {
+            width: 160px;
+            height: 10px;
+            background: var(--vibrant-orange);
+            margin: 30px auto;
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(255, 140, 0, 0.6);
+            animation: pulse 3s infinite ease-in-out, slideUpFade 1s ease forwards 0.5s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); }
-        50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(255, 140, 0, 0.8); }
-    }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(255, 140, 0, 0.8); }
+        }
 
-    header p {
-        font-size: clamp(1.3rem, 3.5vw, 1.9rem);
-        font-weight: 300;
-        max-width: 1000px;
-        color: rgba(255, 255, 255, 0.95);
-        letter-spacing: 3px;
-        text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        transform: translateY(30px);
-        animation: slideUpFade 1s ease forwards 0.7s;
-    }
+        header p {
+            font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+            font-weight: 300;
+            max-width: 1000px;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 3px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 1s ease forwards 0.7s;
+        }
 
-    @keyframes slideUpFade {
-        to { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* --- 顶部按钮组样式 (修改版) --- */
-.header-btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 30px; /* 稍微增加一点间距 */
-    margin: 35px 0;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: slideUpFade 1s ease forwards 0.7s;
-}
+        /* --- 顶部按钮组样式 --- */
+        .header-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 35px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 1s ease forwards 0.7s;
+        }
 
-/* 通用按钮基础架构 */
-.header-btn {
-    text-decoration: none;
-    padding: 12px 35px;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-    overflow: hidden;
-}
+        .header-btn {
+            text-decoration: none;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
 
-/*
-   统一风格样式：
-   1. 类似于Github按钮的半透明背景
-   2. 橙色边框勾勒
-   3. 四周发光效果
-*/
-.btn-paper, .btn-github {
-    /* 玻璃态背景 */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+        .btn-paper, .btn-github {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 2px solid var(--vibrant-orange);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+        }
 
-    /* 橙色边框 (使用你定义的 --vibrant-orange) */
-    border: 2px solid var(--vibrant-orange);
+        .btn-paper:hover, .btn-github:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: rgba(255, 140, 0, 0.15);
+            border-color: #ff9f43;
+            box-shadow: 0 0 35px rgba(255, 140, 0, 0.8), inset 0 0 10px rgba(255, 140, 0, 0.3);
+        }
 
-    /* 文字颜色 */
-    color: white;
+        .btn-paper:active, .btn-github:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
+        }
 
-    /* 初始发光效果 (柔和) */
-    box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
-}
+        header p {
+            animation-delay: 0.9s !important;
+        }
 
-/* 鼠标悬停时的动态效果 */
-.btn-paper:hover, .btn-github:hover {
-    /* 上浮并放大 */
-    transform: translateY(-5px) scale(1.05);
+        /* --- 容器布局 --- */
+        .container {
+            max-width: 1150px;
+            margin: -120px auto 0;
+            padding: 0 25px 120px;
+            position: relative;
+            z-index: 20;
+        }
 
-    /* 背景稍微变亮一点橙色 */
-    background: rgba(255, 140, 0, 0.15);
+        .section-card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 60px;
+            border-radius: 40px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 60px;
+            border: 1px solid white;
+        }
 
-    /* 边框变亮 */
-    border-color: #ff9f43;
+        .abstract-card {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #fcfdfe 100%);
+            border-left: 8px solid var(--vibrant-orange);
+            padding: 50px;
+        }
 
-    /* 强烈发光效果 + 内部微光 */
-    box-shadow: 0 0 35px rgba(255, 140, 0, 0.8),
-                inset 0 0 10px rgba(255, 140, 0, 0.3);
-}
+        .abstract-card::before {
+            content: "”";
+            position: absolute;
+            top: -20px;
+            right: 40px;
+            font-size: 12rem;
+            line-height: 1;
+            font-family: serif;
+            color: rgba(0, 74, 153, 0.06);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* 鼠标点击时的微动反馈 */
-.btn-paper:active, .btn-github:active {
-    transform: translateY(-2px) scale(0.98);
-    box-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
-}
+        .abstract-text {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            font-weight: 500;
+            color: #1e293b;
+            text-align: justify;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 25px;
+        }
 
-/* 为了视觉协调，稍微推迟一下原来的副标题出现时间 */
-header p {
-    animation-delay: 0.9s !important; /* 覆盖原来的0.7s */
-}
-    /* --- 容器布局 --- */
-    .container {
-        max-width: 1150px;
-        margin: -120px auto 0;
-        padding: 0 25px 120px;
-        position: relative;
-        z-index: 20;
-    }
+        .keyword-box {
+            position: relative;
+            z-index: 1;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
 
-    .section-card {
-        background: rgba(255, 255, 255, 0.98);
-        padding: 60px;
-        border-radius: 40px;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 60px;
-        border: 1px solid white;
-    }
-    /* --- 摘要/引言专用样式 --- */
-.abstract-card {
-    position: relative;
-    background: linear-gradient(135deg, #ffffff 0%, #fcfdfe 100%);
-    /* 左侧加一道醒目的橙色装饰线 */
-    border-left: 8px solid var(--vibrant-orange);
-    padding: 50px; /* 稍微紧凑一点的内边距 */
-}
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
 
-/* 巨大的装饰性引号背景 */
-.abstract-card::before {
-    content: "”";
-    position: absolute;
-    top: -20px;
-    right: 40px;
-    font-size: 12rem;
-    line-height: 1;
-    font-family: serif; /* 衬线体引号更有质感 */
-    color: rgba(0, 74, 153, 0.06); /* 极淡的深蓝色 */
-    pointer-events: none;
-    z-index: 0;
-}
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-/* 摘要文字样式增强 */
-.abstract-text {
-    font-size: 1.25rem; /* 比正文大，类似1.25倍 */
-    line-height: 1.8;
-    font-weight: 500; /* 半粗体 */
-    color: #1e293b; /* 更深的颜色，增加可读性 */
-    text-align: justify; /* 两端对齐 */
-    position: relative;
-    z-index: 1; /* 确保文字在引号上面 */
-    margin-bottom: 25px;
-}
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+        }
 
-/* 关键词容器调整 */
-.keyword-box {
-    position: relative;
-    z-index: 1;
-    border-top: 1px dashed #cbd5e1;
-    padding-top: 20px;
-    margin-top: 20px;
-}
+        .icon-box {
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, var(--ocean-blue), var(--ocean-mid));
+            border-radius: 16px;
+            display: flex; justify-content: center; align-items: center;
+            margin-right: 20px; color: white;
+            box-shadow: 0 10px 20px rgba(0, 74, 153, 0.15);
+        }
 
-    .reveal {
-        opacity: 0;
-        transform: translateY(50px);
-        transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
+        h2 { color: var(--ocean-dark); font-size: 2rem; }
+        h3 { color: var(--ocean-blue); margin: 30px 0 15px; font-size: 1.4rem; display: flex; align-items: center; }
+        h3::before { content: "◆"; margin-right: 10px; font-size: 0.8rem; color: var(--vibrant-orange); }
 
-    .reveal.active {
-        opacity: 1;
-        transform: translateY(0);
-    }
+        .text-content {
+            font-size: 1.1rem;
+            line-height: 2;
+            text-align: justify;
+        }
 
-    .section-title-wrap {
-        display: flex;
-        align-items: center;
-        margin-bottom: 40px;
-        border-bottom: 2px solid #f1f5f9;
-        padding-bottom: 20px;
-    }
+        .highlight-box {
+            background: #f0f7ff;
+            border-left: 5px solid var(--ocean-mid);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 15px 15px 0;
+        }
 
-    .icon-box {
-        width: 55px; height: 55px;
-        background: linear-gradient(135deg, var(--ocean-blue), var(--ocean-mid));
-        border-radius: 16px;
-        display: flex; justify-content: center; align-items: center;
-        margin-right: 20px; color: white;
-        box-shadow: 0 10px 20px rgba(0, 74, 153, 0.15);
-    }
+        .keyword-tag {
+            display: inline-block; padding: 5px 18px;
+            background: rgba(255, 140, 0, 0.08);
+            border: 1px solid var(--vibrant-orange);
+            color: var(--vibrant-orange);
+            border-radius: 40px;
+            font-weight: 700; margin: 5px; font-size: 0.9rem;
+        }
 
-    h2 { color: var(--ocean-dark); font-size: 2rem; }
-    h3 { color: var(--ocean-blue); margin: 30px 0 15px; font-size: 1.4rem; display: flex; align-items: center; }
-    h3::before { content: "◆"; margin-right: 10px; font-size: 0.8rem; color: var(--vibrant-orange); }
+        /* --- 图片与表格排版 --- */
+        .media-container {
+            margin: 40px 0;
+            text-align: center;
+        }
 
-    .text-content {
-        font-size: 1.1rem;
-        line-height: 2;
-        text-align: justify;
-    }
+        .media-container img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
 
-    .highlight-box {
-        background: #f0f7ff;
-        border-left: 5px solid var(--ocean-mid);
-        padding: 20px;
-        margin: 20px 0;
-        border-radius: 0 15px 15px 0;
-    }
+        .caption {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #64748b;
+            font-weight: 600;
+        }
 
-    .keyword-tag {
-        display: inline-block; padding: 5px 18px;
-        background: rgba(255, 140, 0, 0.08);
-        border: 1px solid var(--vibrant-orange);
-        color: var(--vibrant-orange);
-        border-radius: 40px;
-        font-weight: 700; margin: 5px; font-size: 0.9rem;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95rem;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.03);
+        }
 
-    /* --- 图片与表格排版 --- */
-    .media-container {
-        margin: 40px 0;
-        text-align: center;
-    }
+        th { background: var(--ocean-blue); color: white; padding: 15px; }
+        td { padding: 12px 15px; border-bottom: 1px solid #edf2f7; text-align: center; background: white; }
+        tr:nth-child(even) td { background: #fcfdfe; }
 
-    .media-container img {
-        max-width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border: 1px solid #e2e8f0;
-    }
+        footer { background: var(--ocean-dark); color: white; padding: 60px 20px; text-align: center; }
+        .footer-link { color: var(--vibrant-orange); text-decoration: none; font-weight: 600; }
 
-    .caption {
-        display: block;
-        margin-top: 15px;
-        font-size: 0.95rem;
-        color: #64748b;
-        font-weight: 600;
-    }
+        /* --- 图片动态交互效果 --- */
+        .dynamic-img {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.95rem;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 0 20px rgba(0,0,0,0.03);
-    }
+        .dynamic-img:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 0 30px rgba(0, 114, 255, 0.5) !important;
+            border-color: var(--ocean-blue) !important;
+        }
 
-    th { background: var(--ocean-blue); color: white; padding: 15px; }
-    td { padding: 12px 15px; border-bottom: 1px solid #edf2f7; text-align: center; background: white; }
-    tr:nth-child(even) td { background: #fcfdfe; }
-
-    footer { background: var(--ocean-dark); color: white; padding: 60px 20px; text-align: center; }
-    .footer-link { color: var(--vibrant-orange); text-decoration: none; font-weight: 600; }
-
-        /* --- 新增：图片动态交互效果 --- */
-.dynamic-img {
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* 平滑过渡动画 */
-    cursor: pointer; /* 鼠标放上去变小手 */
-}
-
-.dynamic-img:hover {
-    transform: translateY(-10px) scale(1.01); /* 向上浮动10像素，并微弱放大 */
-    box-shadow: 0 0 30px rgba(0, 114, 255, 0.5) !important; /* 四周发出蓝色的光 */
-    border-color: var(--ocean-blue) !important;
-}
         /* --- 渐变箭头与协同动态图特效 --- */
+        .arrow-container {
+            text-align: center;
+            margin: 50px 0 30px;
+            position: relative;
+            height: 60px;
+        }
 
-/* 1. 渐变流光箭头 */
-.arrow-container {
-    text-align: center;
-    margin: 40px 0 20px;
-    position: relative;
-    height: 60px;
-}
+        .gradient-arrow {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--ocean-blue) 0%, var(--vibrant-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            animation: arrowBounce 2s infinite ease-in-out;
+        }
 
-.gradient-arrow {
-    font-size: 3rem;
-    font-weight: 900;
-    /* 渐变填充文字 */
-    background: linear-gradient(180deg, var(--ocean-blue) 0%, var(--vibrant-orange) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
-    animation: arrowBounce 2s infinite ease-in-out;
-}
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateY(0); opacity: 0.8; }
+            50% { transform: translateY(10px); opacity: 1; }
+        }
 
-@keyframes arrowBounce {
-    0%, 100% { transform: translateY(0); opacity: 0.8; }
-    50% { transform: translateY(10px); opacity: 1; }
-}
+        /* 2. 动态图舞台 */
+        .synergy-stage {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            background: radial-gradient(circle at center, rgba(0, 74, 153, 0.08) 0%, transparent 65%);
+            overflow: hidden;
+        }
 
-/* --- 升级版 (2.0)：大尺寸 + 动态流线特效 --- */
+        .core-hub {
+            position: absolute;
+            z-index: 20;
+            width: 140px; height: 140px;
+            background: linear-gradient(135deg, var(--ocean-blue), #001f3f);
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            color: white;
+            box-shadow: 0 0 50px rgba(0, 74, 153, 0.6);
+            animation: corePulse 3s infinite ease-in-out;
+            border: 4px solid rgba(255,255,255,0.15);
+        }
 
-/* 1. 渐变流光箭头 */
-.arrow-container {
-    text-align: center;
-    margin: 50px 0 30px; /* 增加一点间距 */
-    position: relative;
-    height: 60px;
-}
+        .core-hub span { font-size: 0.9rem; opacity: 0.9; letter-spacing: 1px; }
+        .core-hub strong { font-size: 1.4rem; font-weight: 800; margin-top: 5px; }
 
-.gradient-arrow {
-    font-size: 3.5rem; /* 稍微加大箭头 */
-    font-weight: 900;
-    background: linear-gradient(180deg, var(--ocean-blue) 0%, var(--vibrant-orange) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
-    animation: arrowBounce 2s infinite ease-in-out;
-}
+        .orbit-system {
+            position: relative;
+            width: 500px; height: 500px;
+            display: flex; justify-content: center; align-items: center;
+            animation: orbitSpin 30s linear infinite;
+        }
 
-@keyframes arrowBounce {
-    0%, 100% { transform: translateY(0); opacity: 0.8; }
-    50% { transform: translateY(10px); opacity: 1; }
-}
+        .flow-ring-outer {
+            position: absolute;
+            width: 480px; height: 480px;
+            border-radius: 50%;
+            border-top: 2px solid rgba(255, 140, 0, 0.8);
+            border-right: 2px solid transparent;
+            border-bottom: 2px solid rgba(255, 140, 0, 0.1);
+            border-left: 2px solid transparent;
+            box-shadow: 0 -5px 20px rgba(255, 140, 0, 0.3);
+            animation: spinRight 8s linear infinite;
+        }
 
-/* 2. 动态图舞台 */
-.synergy-stage {
-    position: relative;
-    width: 100%;
-    height: 600px; /* 高度大幅增加，容纳更大的旋转系统 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 40px;
-    /* 背景加深一点，衬托流线光效 */
-    background: radial-gradient(circle at center, rgba(0, 74, 153, 0.08) 0%, transparent 65%);
-    overflow: hidden;
-}
+        .flow-ring-inner {
+            position: absolute;
+            width: 360px; height: 360px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-left: 4px solid var(--ocean-mid);
+            border-top: 1px solid rgba(0, 114, 255, 0.3);
+            animation: spinLeft 12s linear infinite;
+        }
 
-/* 核心圆点 */
-.core-hub {
-    position: absolute;
-    z-index: 20; /* 确保在最上层 */
-    width: 140px; height: 140px; /* 核心加大 */
-    background: linear-gradient(135deg, var(--ocean-blue), #001f3f);
-    border-radius: 50%;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    color: white;
-    box-shadow: 0 0 50px rgba(0, 74, 153, 0.6);
-    animation: corePulse 3s infinite ease-in-out;
-    border: 4px solid rgba(255,255,255,0.15);
-}
+        .orbit-track-dashed {
+            position: absolute;
+            width: 420px; height: 420px;
+            border: 1px dashed rgba(0, 74, 153, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
-.core-hub span { font-size: 0.9rem; opacity: 0.9; letter-spacing: 1px; }
-.core-hub strong { font-size: 1.4rem; font-weight: 800; margin-top: 5px; }
+        .sat-arm {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            z-index: 15;
+        }
 
-/* 轨道系统容器 */
-.orbit-system {
-    position: relative;
-    width: 500px; height: 500px; /* 容器扩大 */
-    display: flex; justify-content: center; align-items: center;
-    animation: orbitSpin 30s linear infinite; /* 整体旋转稍微放慢，显得更有质感 */
-}
+        .satellite-body {
+            position: relative;
+            width: 95px; height: 95px;
+            margin-top: -52.5px; margin-left: -52.5px;
+            background: white;
+            border: 2px solid var(--vibrant-orange);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.25;
+            text-align: center;
+            color: var(--ocean-dark);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            cursor: default;
+            transition: all 0.3s;
+            animation: counterSpin 30s linear infinite;
+        }
 
-/* --- 新增：动态流线 (Motion Trails) --- */
+        .satellite-body:hover {
+            transform: scale(1.2);
+            background: var(--vibrant-orange);
+            color: white;
+            border-color: white;
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.8);
+            z-index: 30;
+        }
 
-/* 流线 1：外圈橙色拖尾 */
-.flow-ring-outer {
-    position: absolute;
-    width: 480px; height: 480px;
-    border-radius: 50%;
-    border-top: 2px solid rgba(255, 140, 0, 0.8);
-    border-right: 2px solid transparent;
-    border-bottom: 2px solid rgba(255, 140, 0, 0.1);
-    border-left: 2px solid transparent;
-    box-shadow: 0 -5px 20px rgba(255, 140, 0, 0.3); /* 发光 */
-    animation: spinRight 8s linear infinite; /* 快速独立旋转 */
-}
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 74, 153, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(0, 74, 153, 0.8); }
+        }
 
-/* 流线 2：内圈蓝色光环 */
-.flow-ring-inner {
-    position: absolute;
-    width: 360px; height: 360px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    border-left: 4px solid var(--ocean-mid);
-    border-top: 1px solid rgba(0, 114, 255, 0.3);
-    animation: spinLeft 12s linear infinite; /* 反向旋转 */
-}
+        @keyframes orbitSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes counterSpin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes spinRight { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spinLeft { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-/* 装饰：刻度圈 */
-.orbit-track-dashed {
-    position: absolute;
-    width: 420px; height: 420px; /* 这一层对应卫星的轨道 */
-    border: 1px dashed rgba(0, 74, 153, 0.2);
-    border-radius: 50%;
-    pointer-events: none;
-}
+        /* --- 动态海浪页脚特效 --- */
+        .wave-footer {
+            position: relative;
+            background: var(--ocean-dark);
+            color: white;
+            padding-top: 0;
+            margin-top: 100px;
+        }
 
-/* 卫星机械臂 */
-.sat-arm {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 0; height: 0;
-    z-index: 15;
-}
+        .waves-container {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            line-height: 0;
+        }
 
-/* 卫星本体 */
-/* 修改后的卫星本体样式：适应长中文 */
-.satellite-body {
-    position: relative;
-    width: 95px; height: 95px; /* 尺寸加大到 105px */
-    margin-top: -52.5px; margin-left: -52.5px; /* 居中修正：宽高的一半 */
-    background: white;
-    border: 2px solid var(--vibrant-orange);
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
+        .waves-svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 100px;
+        }
 
-    /* 字体调整 */
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 1.25; /* 增加行高，防止文字挤在一起 */
-    text-align: center; /* 文字居中 */
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+        }
 
-    color: var(--ocean-dark);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    cursor: default;
-    transition: all 0.3s;
-    animation: counterSpin 30s linear infinite;
-}
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(0, 114, 255, 0.3); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(0, 74, 153, 0.6); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(255, 255, 255, 0.3); }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: var(--ocean-dark); }
 
-/* 鼠标悬停时变得更大 */
-.satellite-body:hover {
-    transform: scale(1.15); /* 稍微调小缩放比例，因为本体已经很大了 */
-    background: var(--vibrant-orange);
-    color: white;
-    border-color: white;
-    box-shadow: 0 0 40px rgba(255, 140, 0, 0.8);
-    z-index: 30;
-}
+        @keyframes move-forever {
+            0% { transform: translate3d(-90px,0,0); }
+            100% { transform: translate3d(85px,0,0); }
+        }
 
-.satellite-body:hover {
-    transform: scale(1.2);
-    background: var(--vibrant-orange);
-    color: white;
-    border-color: white;
-    box-shadow: 0 0 40px rgba(255, 140, 0, 0.8);
-    z-index: 30;
-}
+        .footer-content {
+            position: relative;
+            z-index: 10;
+            padding: 50px 20px 60px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* 动画定义 */
-@keyframes corePulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 50px rgba(0, 74, 153, 0.6); }
-    50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(0, 74, 153, 0.8); }
-}
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-@keyframes orbitSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes counterSpin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-@keyframes spinRight { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes spinLeft { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        .footer-desc {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
 
-      /* --- 动态海浪页脚特效 (蓝白交织版) --- */
-.wave-footer {
-    position: relative;
-    /* 页脚背景改为深色，衔接最前排的波浪 */
-    background: var(--ocean-dark);
-    color: white;
-    padding-top: 0;
-    margin-top: 100px;
-}
+        .copyright {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 1150px;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
 
-/* 波浪容器 */
-.waves-container {
-    position: absolute;
-    top: -100px;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    overflow: hidden;
-    line-height: 0;
-}
+        /* --- 慢速橙白流光跑马灯特效 --- */
+        .marquee-card {
+            position: relative;
+            padding: 4px;
+            border-radius: 25px;
+            background: linear-gradient(
+                90deg,
+                var(--vibrant-orange) 0%,
+                #ffffff 45%,
+                #ffffff 55%,
+                var(--vibrant-orange) 100%
+            );
+            background-size: 200% auto;
+            animation: flowLight 6s linear infinite;
+            box-shadow: 0 5px 25px rgba(255, 140, 0, 0.25);
+            margin-bottom: 60px;
+        }
 
-.waves-svg {
-    position: relative;
-    display: block;
-    width: calc(100% + 1.3px);
-    height: 100px;
-}
+        @keyframes flowLight {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
 
-/* --- 核心修改：蓝白交织的波浪配色 --- */
-.parallax > use {
-    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
-}
+        .marquee-inner {
+            background: #ffffff;
+            border-radius: 21px;
+            padding: 40px 50px;
+            height: 100%;
+        }
 
-/* 第1层 (最远): 浅蓝色 - 与白色背景形成对比 */
-.parallax > use:nth-child(1) {
-    animation-delay: -2s;
-    animation-duration: 7s;
-    fill: rgba(0, 114, 255, 0.3); /* 浅透蓝 */
-}
+        .abstract-text {
+            font-size: 1.2rem;
+            line-height: 1.9;
+            color: #334155;
+            text-align: justify;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
 
-/* 第2层 (中间): 较深的海洋蓝 */
-.parallax > use:nth-child(2) {
-    animation-delay: -3s;
-    animation-duration: 10s;
-    fill: rgba(0, 74, 153, 0.6); /* 中透蓝 */
-}
+        /* ========================================= */
+        /* ★★★ 新增：页脚动态数据图标样式 ★★★ */
+        /* ========================================= */
+        .stats-btn-wrapper {
+            margin: 20px 0;
+            position: relative;
+            z-index: 20;
+        }
 
-/* 第3层 (近处): 半透明白色 - 模拟“浪花”，夹在蓝浪之间形成交织感 */
-.parallax > use:nth-child(3) {
-    animation-delay: -4s;
-    animation-duration: 13s;
-    fill: rgba(255, 255, 255, 0.3); /* 白色浪花 */
-}
+        .stats-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05); /* 微透明背景 */
+            border: 2px solid var(--vibrant-orange);
+            color: var(--vibrant-orange);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            /* 呼吸灯动画 */
+            animation: pulse-orange 3s infinite;
+        }
 
-/* 第4层 (最前): 实心深色 - 必须与 footer 背景一致 */
-.parallax > use:nth-child(4) {
-    animation-delay: -5s;
-    animation-duration: 20s;
-    fill: var(--ocean-dark); /* 实心深蓝 */
-}
+        .stats-btn:hover {
+            background: var(--vibrant-orange);
+            color: white;
+            /* 悬停时旋转并放大 */
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
+        }
 
-/* 动画关键帧 */
-@keyframes move-forever {
-    0% { transform: translate3d(-90px,0,0); }
-    100% { transform: translate3d(85px,0,0); }
-}
+        /* 提示文字 Tooltip */
+        .stats-btn::after {
+            content: "查看全球访客数据";
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            pointer-events: none;
+        }
 
-/* 页脚内容区域 (保持不变) */
-.footer-content {
-    position: relative;
-    z-index: 10;
-    padding: 50px 20px 60px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+        .stats-btn:hover::after {
+            opacity: 1;
+        }
 
-.footer-logo {
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
-    background: linear-gradient(to right, #fff, #cbd5e1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        /* 橙色呼吸动画 */
+        @keyframes pulse-orange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 140, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0); }
+        }
 
-.footer-desc {
-    font-size: 0.95rem;
-    opacity: 0.8;
-    max-width: 600px;
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-.copyright {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%;
-    max-width: 1150px;
-    padding-top: 20px;
-    margin-top: 20px;
-}
-     /* --- 慢速橙白流光跑马灯特效 --- */
-.marquee-card {
-    position: relative;
-    /* 边框厚度：4px */
-    padding: 4px;
-    border-radius: 25px;
-
-    /* 核心修改：背景渐变改为 [亮橙色 - 纯白 - 亮橙色] 的循环 */
-    background: linear-gradient(
-        90deg,
-        var(--vibrant-orange) 0%,
-        #ffffff 45%,  /* 白色高光区域 */
-        #ffffff 55%,
-        var(--vibrant-orange) 100%
-    );
-
-    /* 放大背景尺寸，让渐变拉伸，看起来光带更宽 */
-    background-size: 200% auto;
-
-    /* 核心修改：时长改为 6s，实现慢速流动效果 */
-    animation: flowLight 6s linear infinite;
-
-    /* 外部柔和光晕 */
-    box-shadow: 0 5px 25px rgba(255, 140, 0, 0.25);
-    margin-bottom: 60px;
-}
-
-/* 动画定义：背景水平移动 */
-@keyframes flowLight {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-/* 内部纯白容器 */
-.marquee-inner {
-    background: #ffffff; /* 纯白背景 */
-    /* 这里的圆角 = 外层圆角(25px) - padding(4px)，保证视觉同心 */
-    border-radius: 21px;
-    padding: 40px 50px;
-    height: 100%;
-}
-
-/* 摘要文字样式 */
-.abstract-text {
-    font-size: 1.2rem;
-    line-height: 1.9;
-    color: #334155;
-    text-align: justify;
-    font-weight: 500;
-    /* 稍微把字间距拉开一点点，显得更高级 */
-    letter-spacing: 0.5px;
-}
-</style>
+    </style>
 </head>
 <body>
 <header id="header">
     <div class="particles" id="particle-container"></div>
     <div class="header-content">
-        <!-- 合并后的双行标题 -->
-        <!-- 第一行：面向船用柴油机... (字多) -->
-        <!-- 第二行：热力学仿真辅助随机森林 (字少) -->
         <h1>热力学仿真辅助随机森林:面向船用柴油机<br>燃烧室组件的可解释故障诊断</h1>
-
-        <!-- 装饰线 -->
         <div class="title-line"></div>
-
-        <!-- 按钮组 -->
         <div class="header-btn-group">
             <a href="https://www.sciencedirect.com/science/article/pii/S0263224125006116?getft_integrator=clarivate&pes=vor&utm_source=clarivate" target="_blank" class="header-btn btn-paper">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                 全文链接
             </a>
-
             <a href="https://ts-rf.github.io/zh-CN/" target="_blank" class="header-btn btn-github">
                 <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 原作者 Github 页面
@@ -759,31 +693,25 @@ header p {
     </div>
 </header>
 <div class="container">
-<!-- 修改后的摘要部分：去掉了标题，增强了文字效果 -->
-<!-- 摘要部分：跑马灯流光边框设计 -->
-<section class="marquee-card reveal">
-    <!-- 内部纯白容器 -->
-    <div class="marquee-inner">
-        <div class="text-content">
-            <!-- 摘要正文 -->
-            <p class="abstract-text">
-                针对传统船用柴油机智能故障诊断方法因故障训练样本匮乏导致泛化能力弱，以及对故障机理的领域知识融合不足导致可解释性差的问题，该论文提出了一种<strong>热力学仿真辅助随机森林模型（ThermoRF）</strong>。该模型通过热力学仿真揭示故障特征，并将其作为先验知识融入智能故障诊断模型的设计中。首先，通过微调关键系统参数以匹配不同故障的显著特征，建立了五个热力学故障模型。随后，通过数值仿真结果确定了燃烧室部件性能退化的潜在热力学指标。通过计算SHAP值，进行参数筛选，仅保留与故障状态呈现显著相关性的变量。最后，利用所选参数评估燃烧室状态并输入故障诊断模型。所提出的ThermoRF方法在该论文构建的故障数据集上表现出较高的分类性能，平均准确率达99.07%。基于SHAP值从局部和全局角度对模型的估计结果进行了解释。实验结果表明，涡轮增压器排气温度、窜气热流及热流对故障预测贡献显著。
-            </p>
-
-            <!-- 关键词部分 -->
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
-                <span style="font-weight: 800; color: var(--ocean-dark); margin-right: 10px; font-size: 1.05rem;">关键词：</span>
-                <span class="keyword-tag">船用柴油机</span>
-                <span class="keyword-tag">热力学模型</span>
-                <span class="keyword-tag">故障诊断</span>
-                <span class="keyword-tag">随机森林</span>
-                <span class="keyword-tag">可解释性</span>
+    <section class="marquee-card reveal">
+        <div class="marquee-inner">
+            <div class="text-content">
+                <p class="abstract-text">
+                    针对传统船用柴油机智能故障诊断方法因故障训练样本匮乏导致泛化能力弱，以及对故障机理的领域知识融合不足导致可解释性差的问题，该论文提出了一种<strong>热力学仿真辅助随机森林模型（ThermoRF）</strong>。该模型通过热力学仿真揭示故障特征，并将其作为先验知识融入智能故障诊断模型的设计中。首先，通过微调关键系统参数以匹配不同故障的显著特征，建立了五个热力学故障模型。随后，通过数值仿真结果确定了燃烧室部件性能退化的潜在热力学指标。通过计算SHAP值，进行参数筛选，仅保留与故障状态呈现显著相关性的变量。最后，利用所选参数评估燃烧室状态并输入故障诊断模型。所提出的ThermoRF方法在该论文构建的故障数据集上表现出较高的分类性能，平均准确率达99.07%。基于SHAP值从局部和全局角度对模型的估计结果进行了解释。实验结果表明，涡轮增压器排气温度、窜气热流及热流对故障预测贡献显著。
+                </p>
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+                    <span style="font-weight: 800; color: var(--ocean-dark); margin-right: 10px; font-size: 1.05rem;">关键词：</span>
+                    <span class="keyword-tag">船用柴油机</span>
+                    <span class="keyword-tag">热力学模型</span>
+                    <span class="keyword-tag">故障诊断</span>
+                    <span class="keyword-tag">随机森林</span>
+                    <span class="keyword-tag">可解释性</span>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="section-card reveal">
+    <section class="section-card reveal">
         <div class="section-title-wrap">
             <div class="icon-box">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -796,7 +724,6 @@ header p {
                 <li><strong>数据匮乏：</strong> 船用柴油机是船舶最核心的设备之一，对其状态的持续监控、故障诊断和预防性维护，是航运业保障航行安全的核心问题。船用柴油机设计初始目标是其极高可靠性和长寿命，因此重大故障率很低，即便发生故障，首要任务是维修而不是记录故障演变的数据。</li>
                 <li><strong>方法缺陷：</strong> 传统船用柴油机的故障诊断方法主要有基于模型的方法、数据驱动方法和混合方法，这三类方法各有利弊，但都无法实现将样本数据和物理模型融合且合理解释特征决策过程。</li>
             </ul>
-
             <div class="highlight-box" style="
                 background: linear-gradient(120deg, #fff9f0 0%, #fff 100%);
                 border-left: 6px solid var(--vibrant-orange);
@@ -814,7 +741,6 @@ header p {
                         <span style="font-weight: 900; color: var(--ocean-blue); font-size: 1.25rem;">热力学仿真辅助随机森林（ThermoRF）方法</span>。
                         <p style="margin-top: 10px; line-height: 1.8; color: #475569; font-weight: 600;">
                             其最大特点在于
-                            <!-- 修改处：对“模型-数据”协同进行了强力高亮 -->
                             <span style="
                                 color: var(--vibrant-orange);
                                 background: rgba(255, 140, 0, 0.12);
@@ -829,11 +755,10 @@ header p {
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
-<section class="section-card reveal">
+    <section class="section-card reveal">
         <div class="section-title-wrap">
             <div class="icon-box">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
@@ -841,63 +766,44 @@ header p {
             <h2>二、研究方法</h2>
         </div>
         <div class="text-content">
-
             <h3>1. 热力学建模</h3>
             <p>构建柴油机一维热力学模型，主要用于模拟故障状态并生成训练数据。该模型建立了六个监测点（MP1至MP6）以获取相关的热力学参数，通过后续与来源于数据采集模块（DCM）的真实船舶航行数据校准，该模型的热力学参数在仿真条件下与真实测量偏差小于5%，这种一致性验证了模型的可靠性。</p>
-
             <div style="display: flex; gap: 30px; margin: 30px 0; align-items: stretch; flex-wrap: wrap;">
-
-                <!-- 左图容器：flex: 1.4 (更宽) -->
                 <div style="flex: 1.4; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                        <!-- 添加了 class="dynamic-img" -->
                         <img class="dynamic-img" src="1.jpg" alt="柴油机一维热力学模型" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                     </div>
                     <span class="caption" style="text-align: center; margin-top: 0;">图1 柴油机一维热力学模型</span>
                 </div>
-
-                <!-- 右图容器：flex: 0.8 (更窄) -->
                 <div style="flex: 0.8; min-width: 200px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                        <!-- 添加了 class="dynamic-img" -->
                         <img class="dynamic-img" src="4.jpg" alt="数据采集模块 (DCM)" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
                     </div>
                     <span class="caption" style="text-align: center; margin-top: 0;">图2 数据采集模块（DCM）</span>
                 </div>
-
             </div>
-
             <h3>2. 故障建模</h3>
             <p>基于建立好的柴油机一维热力学模型，通过微调参数将燃烧室组件的健康状态设定为正常状态（F0）、气缸盖开裂（F1）、活塞烧蚀（F2）、缸套磨损（F3）、活塞环磨损（F4）和活塞环粘着（F5）六个不同状态，从而生成五种不同故障的高保真数据集。</p>
-
             <div class="media-container">
-                <!-- 添加了 class="dynamic-img" -->
                 <img class="dynamic-img" src="9.PNG" alt="故障模拟示意图">
                 <span class="caption">表1 故障状态细节</span>
             </div>
-
             <h3>3. 选择参数</h3>
             <p>首先由构建的柴油机一维热力学模型输出14个具有显著状态评估诊断潜力的热力学参数，随后通过计算SHAP值量化这些参数的重要性并进行排序，将前8个重要特征参数组成优化子集。</p>
-
             <div class="media-container">
-                <!-- 添加了 class="dynamic-img" -->
                 <img class="dynamic-img" src="2.jpg" alt="特征选择过程">
                 <span class="caption">图3 基于SHAP的参数选择过程</span>
             </div>
-
             <h3>4. 故障识别</h3>
             <p>将包含8个热力学参数的精炼子集输入至随机森林分类器（RF）进行故障诊断，该模型在样本有限的情况下表现出较高的诊断分类能力。</p>
-
             <div class="media-container">
-                <!-- 添加了 class="dynamic-img" -->
                 <img class="dynamic-img" src="3.jpg" alt="随机森林分类流程">
                 <span class="caption">图4 ThermoRF 故障诊断模型架构</span>
             </div>
-
         </div>
     </section>
 
-<section class="section-card reveal">
+    <section class="section-card reveal">
         <div class="section-title-wrap">
             <div class="icon-box">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -905,22 +811,17 @@ header p {
             <h2>三、数据与仿真</h2>
         </div>
         <div class="text-content">
-
             <h3>1. 实验数据集</h3>
             <p>从构建的柴油机一维热力学模型完整运行周期的仿真结果中提取，样本比例按照训练：测试=7：3。该数据集涵盖了不同工况下的丰富样本，确保了模型训练的鲁棒性。</p>
-
             <h3>2. 仿真结果</h3>
             <p>识别出14个具有显著状态评估诊断潜力的热力学参数，例如气缸压力、气缸温度、活塞壁热流等。下图展示气缸压力、气缸温度、活塞壁热流在不同健康状态下的变化：</p>
-
             <div class="media-container">
                 <img class="dynamic-img" src="5.PNG" alt="热力学参数变化曲线">
                 <span class="caption">图5 故障仿真结果：（a）气缸压力；（b）气缸温度；（c）活塞壁热流</span>
             </div>
-
         </div>
     </section>
 
-   <!-- 新增部分：四、研究成果 -->
     <section class="section-card reveal">
         <div class="section-title-wrap">
             <div class="icon-box">
@@ -931,112 +832,66 @@ header p {
             <h2>四、研究成果</h2>
         </div>
         <div class="text-content">
-
             <h3>1. 筛选参数</h3>
             <p>从14个热力学参数中，基于SHAP值选取重要性最高且最具评估意义的8个参数用于故障诊断。</p>
-
-            <!-- 图8：静态结果 -->
             <div class="media-container">
                 <img class="dynamic-img" src="6.jpg" alt="基于SHAP值的参数筛选结果">
                 <span class="caption">图6 基于SHAP值的热力学参数的重要性：（a）SHAP值的热图；（b）柱状叠加图；（c）百分比图表。</span>
             </div>
-
-
-            <!-- 1. 渐变箭头 -->
             <div class="arrow-container">
                 <div class="gradient-arrow">▼</div>
                 <div style="font-size: 0.9rem; color: #94a3b8; margin-top: -5px; font-weight: 600; letter-spacing: 2px;">参数协同</div>
             </div>
-
-           <!-- 2. 升级版协同动态图 (文字绝对水平版) -->
             <div class="synergy-stage">
-                <!-- 核心 -->
                 <div class="core-hub">
                     <strong>ThermoRF</strong>
-
                 </div>
-
-                <!-- 旋转系统 -->
                 <div class="orbit-system">
-
                     <div class="flow-ring-outer"></div>
                     <div class="flow-ring-inner"></div>
                     <div class="orbit-track-dashed"></div>
-
-                    <!--
-                       修改原理：
-                       我们在每个 transform 里增加了一个反向 rotate。
-                       例如：rotate(45deg) translate(210px) 后面加了 rotate(-45deg)
-                       这样“机械臂”伸出去后，会把尽头的“篮子”回正，确保文字起始就是水平的。
-                       配合 CSS 中的 counterSpin 动画，文字就能全程保持水平。
-                    -->
-
-                    <!-- 卫星 1: 0度 (不需要修，本来就是正的) -->
                     <div class="sat-arm" style="transform: rotate(0deg) translate(210px) rotate(0deg);">
                         <div class="satellite-body">缸套壁<br>热流</div>
                     </div>
-
-                    <!-- 卫星 2: 45度 -> 修正 -45度 -->
                     <div class="sat-arm" style="transform: rotate(45deg) translate(210px) rotate(-45deg);">
                         <div class="satellite-body">涡轮后<br>排气温度</div>
                     </div>
-
-                    <!-- 卫星 3: 90度 -> 修正 -90度 -->
                     <div class="sat-arm" style="transform: rotate(90deg) translate(210px) rotate(-90deg);">
                         <div class="satellite-body">活塞壁<br>热流</div>
                     </div>
-
-                    <!-- 卫星 4: 135度 -> 修正 -135度 -->
                     <div class="sat-arm" style="transform: rotate(135deg) translate(210px) rotate(-135deg);">
                         <div class="satellite-body">窜气<br>热流</div>
                     </div>
-
-                    <!-- 卫星 5: 180度 -> 修正 -180度 -->
                     <div class="sat-arm" style="transform: rotate(180deg) translate(210px) rotate(-180deg);">
                         <div class="satellite-body">窜气质量<br>流量</div>
                     </div>
-
-                    <!-- 卫星 6: 225度 -> 修正 -225度 -->
                     <div class="sat-arm" style="transform: rotate(225deg) translate(210px) rotate(-225deg);">
                         <div class="satellite-body">涡轮前<br>排气压力</div>
                     </div>
-
-                    <!-- 卫星 7: 270度 -> 修正 -270度 -->
                     <div class="sat-arm" style="transform: rotate(270deg) translate(210px) rotate(-270deg);">
                         <div class="satellite-body">涡轮前<br>排气温度</div>
                     </div>
-
-                    <!-- 卫星 8: 315度 -> 修正 -315度 -->
                     <div class="sat-arm" style="transform: rotate(315deg) translate(210px) rotate(-315deg);">
                         <div class="satellite-body">缸盖壁<br>热流</div>
                     </div>
-
                 </div>
             </div>
-
             <p style="text-align: center; color: #64748b; font-size: 0.95rem; margin-top: -15px; margin-bottom: 50px;">
                 *筛选出的8个关键热力学参数实时协同输入,驱动模型实现可解释性诊断*
             </p>
-
-            <!-- 下面是原有的效果对比部分 -->
             <h3>2. 效果对比</h3>
-
-
             <p style="color: var(--ocean-blue); font-weight: 700; margin-top: 20px; margin-bottom: 10px;">(1) 分类器对比</p>
             <p>基于随机森林（RF）分类器进行分类，在原始数据集和优化子集上与K近邻（KNN）分类器、支持向量机（SVM）对比6个健康状态的评估指标，包括精度、召回率、F1分数和准确率。结果表明，RF在实验构建的数据集中表现优于KNN和SVM。</p>
-
             <div class="media-container">
                 <img class="dynamic-img" src="7.jpg" alt="不同分类器性能对比柱状图">
                 <span class="caption">图7 (a)-(c)分别呈现原始数据集上的KNN、SVM和RF的精度-召回率曲线</span>
             </div>
-
             <p style="color: var(--ocean-blue); font-weight: 700; margin-top: 20px; margin-bottom: 10px;">(2) 参数选择方法对比</p>
             <p>将基于SHAP值法与传统的卡方检验(Chi-Square)、递归特征消除(RFE)和Gini指数进行对比。结果表明，在实验构建的数据集中，基于SHAP值的方法在RF中的平均准确率高达99.07%，高于Chi-Square（78.51%）、RFE（81.62%）、Gini（88.95%）。</p>
-
         </div>
     </section>
 
-<section class="section-card reveal">
+    <section class="section-card reveal">
         <div class="section-title-wrap">
             <div class="icon-box">
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -1049,8 +904,6 @@ header p {
                 <li><strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。</li>
                 <li><strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。</li>
             </ul>
-
-            <!-- 新增图片：双尺度可解释性 -->
             <div class="media-container" style="margin-top: 40px;">
                 <img class="dynamic-img" src="8.jpg" alt="SHAP双尺度可解释性可视化">
                 <span class="caption">图8 基于SHAP值的活塞环磨损(F4)故障分析：(a)瀑布图；(b)蜂群图；(c)交互图；(d)依赖图</span>
@@ -1058,23 +911,21 @@ header p {
         </div>
     </section>
 
-<section class="section-card reveal">
-    <h2>原始文献</h2>
-    <div style="margin-top: 25px; font-size: 0.95rem; color: #64748b;">
-        <p>C. Luo, M. Zhao, X. Fu, S. Zhong, S. Fu, K. Zhang, X. Yu. Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines[J]. Measurement, 2025, 251: 117252.</p>
-
-    </div>
-</section>
+    <section class="section-card reveal">
+        <h2>原始文献</h2>
+        <div style="margin-top: 25px; font-size: 0.95rem; color: #64748b;">
+            <p>C. Luo, M. Zhao, X. Fu, S. Zhong, S. Fu, K. Zhang, X. Yu. Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines[J]. Measurement, 2025, 251: 117252.</p>
+        </div>
+    </section>
 </div>
+
 <footer class="wave-footer">
-    <!-- 波浪 SVG 容器 -->
     <div class="waves-container">
         <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
             <defs>
                 <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
             </defs>
             <g class="parallax">
-                <!-- 四层波浪，通过 CSS 控制透明度和速度 -->
                 <use xlink:href="#gentle-wave" x="48" y="0" />
                 <use xlink:href="#gentle-wave" x="48" y="3" />
                 <use xlink:href="#gentle-wave" x="48" y="5" />
@@ -1083,13 +934,26 @@ header p {
         </svg>
     </div>
 
-    <!-- 页脚正文 -->
     <div class="footer-content">
         <div class="footer-logo">ThermoRF</div>
         <p class="footer-desc">
             可解释故障诊断<br>
             热力学仿真辅助随机森林
         </p>
+
+        <!-- ★★★ 在这里插入了动态跳转图标 ★★★ -->
+        <!-- 请替换 href 里面的链接为你 Looker Studio 的分享链接 -->
+        <div class="stats-btn-wrapper">
+            <a href="https://lookerstudio.google.com/reporting/5f660bb9-4ea1-4db4-99fb-8c1241b48468" target="_blank" class="stats-btn" title="点击查看全球访客数据">
+                <!-- SVG 图标：数据图表 -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </a>
+        </div>
+        <!-- ★★★ 结束 ★★★ -->
 
         <div class="copyright">
             <p>&copy; · 2025 · ThermoRF </p>
