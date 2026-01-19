@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>可解释故障诊断：热力学仿真辅助随机森林</title>
+    <title data-i18n="browser-title">可解释故障诊断：热力学仿真辅助随机森林</title>
     <style>
-        /* --- 全局变量：学术笔记风格 --- */
+        /* --- 全局变量 --- */
         :root {
             --primary-blue: #0056b3;
             --text-main: #333333;
@@ -35,7 +35,39 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 60px 20px;
-            overflow-x: hidden; /* 防止任何水平溢出 */
+            overflow-x: hidden;
+        }
+
+        /* --- 语言切换器样式 --- */
+        .lang-switch-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            z-index: 2000;
+        }
+
+        .lang-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 30px 8px 15px;
+            font-size: 0.9rem;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 10px auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .lang-select:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         /* --- 头部样式 --- */
@@ -44,6 +76,7 @@
             margin-bottom: 60px;
             padding-bottom: 40px;
             border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
 
         header h1 {
@@ -97,17 +130,6 @@
             color: #444;
         }
 
-        .keyword-tag {
-            display: inline-block;
-            background: #eef2f6;
-            color: var(--primary-blue);
-            padding: 2px 10px;
-            margin: 5px 5px 5px 0;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
         /* --- 章节通用 --- */
         .section-card {
             margin-bottom: 60px;
@@ -123,8 +145,6 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #eee;
         }
-
-        .icon-box { display: none; }
 
         h2 { font-size: 1.75rem; color: #222; font-weight: 700; }
 
@@ -142,17 +162,7 @@
         ul { margin-bottom: 1.2rem; padding-left: 20px; }
         li { margin-bottom: 8px; }
 
-        /* --- 高亮框 --- */
-        .highlight-box {
-            background: #fff8e1;
-            border: 1px solid #ffe082;
-            color: #5d4037;
-            padding: 20px;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-
-        /* --- 图片容器 (单图) --- */
+        /* --- 图片容器 --- */
         .media-container {
             margin: 30px 0;
             text-align: center;
@@ -165,20 +175,17 @@
             padding: 5px;
             background: white;
             border-radius: 4px;
-
-            /* 新增：平滑过渡效果 */
             transition: all 0.3s ease;
-            cursor: pointer; /* 鼠标放上去变成手型 */
+            cursor: pointer;
         }
 
-        /* 新增：单图悬停浮动效果 */
         .media-container img:hover {
-            transform: translateY(-8px); /* 向上浮动 8px */
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* 底部增加柔和阴影 */
-            border-color: var(--primary-blue); /* 边框变色，增加交互感 */
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-blue);
         }
 
-        /* --- 双图并排容器 (防溢出修正版) --- */
+        /* --- 双图并排容器 --- */
         .dual-image-row {
             display: flex;
             flex-direction: row;
@@ -202,46 +209,31 @@
             height: 250px;
             width: auto;
             max-width: 100%;
-
             border: 1px solid #ddd;
             padding: 5px;
             background: white;
             border-radius: 4px;
             margin-bottom: 12px;
             object-fit: contain;
-
-            /* 新增：平滑过渡效果 */
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        /* 新增：双图悬停浮动效果 */
         .image-wrapper img:hover {
-            transform: translateY(-8px); /* 向上浮动 */
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* 增加阴影 */
-            border-color: var(--primary-blue); /* 边框变色 */
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-blue);
         }
 
-        /* 响应式调整 */
         @media (max-width: 768px) {
-            /* 在平板上，稍微减小高度以保持横向排列 */
-            .image-wrapper img {
-                height: 150px;
-            }
+            .image-wrapper img { height: 150px; }
+            .lang-switch-wrapper { top: 10px; right: 10px; }
         }
 
         @media (max-width: 500px) {
-            /* 在手机上，实在太窄则换行 */
-            .dual-image-row {
-                flex-wrap: wrap;
-            }
-            .image-wrapper {
-                width: 100%;
-            }
-            .image-wrapper img {
-                height: auto;
-                width: 100%;
-            }
+            .dual-image-row { flex-wrap: wrap; }
+            .image-wrapper { width: 100%; }
+            .image-wrapper img { height: auto; width: 100%; }
         }
 
         .caption {
@@ -282,13 +274,6 @@
             min-height: 60px;
         }
 
-        .simple-arrow-down {
-            text-align: center;
-            font-size: 2rem;
-            color: #ccc;
-            margin: 10px 0;
-        }
-
         .simple-footer {
             margin-top: 80px;
             padding: 40px 0;
@@ -302,148 +287,91 @@
         .footer-desc { font-size: 0.9rem; margin-bottom: 20px; }
         .copyright { font-size: 0.8rem; color: #999; }
 
-        /* 隐藏废弃元素 */
-        .arrow-container, .gradient-arrow, .synergy-stage, .particles, .waves-container { display: none; }
-        /* --- 左侧导航栏样式 (全屏高度版) --- */
-        html {
-            scroll-behavior: smooth;
-        }
-
+        /* --- 导航栏 --- */
+        html { scroll-behavior: smooth; }
         .sidebar {
-            position: fixed;
-            left: 0;                 /* 贴紧左侧边缘 */
-            top: 0;                  /* 从屏幕最顶端开始 */
-            bottom: 0;               /* 延伸到屏幕最底端 */
-            height: 100vh;           /* 强制全屏高度 */
-            width: 260px;            /* 导航栏宽度 */
-
-            background: #fff;        /* 背景色 */
-            border-right: 2px solid #000; /* 【修改点】改为黑色实线，贯穿上下 */
-
-            /* 【修改点】顶部增加内边距，让“目录导航”几个字位置适中，不贴顶 */
-            padding: 120px 20px 20px 40px;
-
-            overflow-y: auto;        /* 内容过多时允许内部滚动 */
-            display: none;           /* 默认隐藏 */
-            z-index: 100;
+            position: fixed; left: 0; top: 0; bottom: 0; height: 100vh; width: 260px;
+            background: #fff; border-right: 2px solid #000; padding: 120px 20px 20px 40px;
+            overflow-y: auto; display: none; z-index: 100;
         }
-
-        /* 屏幕宽度足够大时才显示 */
-        @media (min-width: 1300px) {
-            .sidebar { display: block; }
-        }
-
-        .sidebar-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #000;
-            border-bottom: 2px solid #000; /* 标题下的线也改为黑色 */
-            padding-bottom: 10px;
-        }
-
-        .nav-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        /* ... 其余 .nav-link, .level-1, .level-2 样式保持不变 ... */
+        @media (min-width: 1300px) { .sidebar { display: block; } }
+        .sidebar-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #000; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .nav-list { list-style: none; padding: 0; }
         .nav-list li { margin-bottom: 8px; }
         .nav-link { display: block; color: #555; font-size: 0.9rem; padding: 4px 0; transition: color 0.2s; text-decoration: none; }
         .nav-link:hover { color: var(--primary-blue); text-decoration: none; font-weight: 600; }
         .level-1 { font-weight: 600; margin-top: 15px; color: #333; }
         .level-2 { padding-left: 15px; font-size: 0.85rem; color: #777; border-left: 2px solid #eee; }
         .level-2:hover { border-left-color: var(--primary-blue); }
-        /* --- 灯箱（Lightbox）效果样式 --- */
+
+        /* --- 灯箱 --- */
         .lightbox-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); /* 深色半透明背景 */
-            z-index: 9999; /* 保证在最上层，覆盖导航栏 */
-            display: none; /* 默认隐藏 */
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px); /* 背景模糊效果（可选） */
-            cursor: zoom-out;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); z-index: 9999;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px); cursor: zoom-out;
         }
-
         .lightbox-content {
-            max-width: 90%;
-            max-height: 90vh;
+            max-width: 90%; max-height: 90vh;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            border: 2px solid #fff;
-            border-radius: 4px;
-            animation: zoomIn 0.3s ease; /* 弹窗放大动画 */
-            cursor: default;
+            border: 2px solid #fff; border-radius: 4px;
+            animation: zoomIn 0.3s ease; cursor: default;
         }
-
         .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 40px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-            z-index: 10000;
+            position: absolute; top: 20px; right: 40px; color: #fff;
+            font-size: 40px; font-weight: bold; cursor: pointer;
+            transition: color 0.2s; z-index: 10000;
         }
-
-        .lightbox-close:hover {
-            color: var(--accent-orange);
-        }
-
-        /* 简单的放大动画 */
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        .lightbox-close:hover { color: var(--accent-orange); }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
-<!-- 左侧悬浮导航栏 -->
+
+<div class="lang-switch-wrapper">
+    <select id="languageSelect" class="lang-select" onchange="changeLanguage(this.value)">
+        <option value="zh-CN">🇨🇳 中文</option>
+        <option value="en">🇺🇸 English</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="de">🇩🇪 Deutsch</option>
+    </select>
+</div>
+
+<!-- 导航栏 -->
 <nav class="sidebar">
-    <div class="sidebar-title">导航栏</div>
+    <div class="sidebar-title" data-i18n="nav-title">导航栏</div>
     <ul class="nav-list">
-        <li><a href="#sec-1" class="nav-link level-1">一、研究背景</a></li>
-
-        <li><a href="#sec-2" class="nav-link level-1">二、研究方法</a></li>
-        <li><a href="#sec-2-1" class="nav-link level-2">1. 热力学建模</a></li>
-        <li><a href="#sec-2-2" class="nav-link level-2">2. 故障建模</a></li>
-        <li><a href="#sec-2-3" class="nav-link level-2">3. 选择参数</a></li>
-        <li><a href="#sec-2-4" class="nav-link level-2">4. 故障识别</a></li>
-
-        <li><a href="#sec-3" class="nav-link level-1">三、数据与仿真</a></li>
-        <li><a href="#sec-3-1" class="nav-link level-2">1. 实验数据集</a></li>
-        <li><a href="#sec-3-2" class="nav-link level-2">2. 仿真结果</a></li>
-
-        <li><a href="#sec-4" class="nav-link level-1">四、研究成果</a></li>
-        <li><a href="#sec-4-1" class="nav-link level-2">1. 筛选参数</a></li>
-        <li><a href="#sec-4-2" class="nav-link level-2">2. 效果对比</a></li>
-
-        <li><a href="#sec-5" class="nav-link level-1">五、亮点—可解释性</a></li>
-        <li><a href="#sec-6" class="nav-link level-1">原始文献</a></li>
+        <li><a href="#sec-1" class="nav-link level-1" data-i18n="nav-sec-1">一、研究背景</a></li>
+        <li><a href="#sec-2" class="nav-link level-1" data-i18n="nav-sec-2">二、研究方法</a></li>
+        <li><a href="#sec-2-1" class="nav-link level-2" data-i18n="nav-sec-2-1">1. 热力学建模</a></li>
+        <li><a href="#sec-2-2" class="nav-link level-2" data-i18n="nav-sec-2-2">2. 故障建模</a></li>
+        <li><a href="#sec-2-3" class="nav-link level-2" data-i18n="nav-sec-2-3">3. 选择参数</a></li>
+        <li><a href="#sec-2-4" class="nav-link level-2" data-i18n="nav-sec-2-4">4. 故障识别</a></li>
+        <li><a href="#sec-3" class="nav-link level-1" data-i18n="nav-sec-3">三、数据与仿真</a></li>
+        <li><a href="#sec-3-1" class="nav-link level-2" data-i18n="nav-sec-3-1">1. 实验数据集</a></li>
+        <li><a href="#sec-3-2" class="nav-link level-2" data-i18n="nav-sec-3-2">2. 仿真结果</a></li>
+        <li><a href="#sec-4" class="nav-link level-1" data-i18n="nav-sec-4">四、研究成果</a></li>
+        <li><a href="#sec-4-1" class="nav-link level-2" data-i18n="nav-sec-4-1">1. 筛选参数</a></li>
+        <li><a href="#sec-4-2" class="nav-link level-2" data-i18n="nav-sec-4-2">2. 效果对比</a></li>
+        <li><a href="#sec-5" class="nav-link level-1" data-i18n="nav-sec-5">五、亮点—可解释性</a></li>
+        <li><a href="#sec-6" class="nav-link level-1" data-i18n="nav-sec-6">原始文献</a></li>
     </ul>
 </nav>
+
 <header id="header">
-    <!-- 修改1：添加 max-width: 1200px，让头部容器比正文(900px)更宽，容纳长标题 -->
     <div class="container" style="padding-bottom: 0; max-width: 1200px;">
-        <!-- 修改2：字号设为 2.3rem (约37px)，配合更宽的容器即可单行显示 -->
-        <h1 style="font-size: 2.3rem;">
+        <h1 style="font-size: 2.3rem;" data-i18n="main-title">
             <span style="color: #b71c1c;">【学习笔记】</span>可解释故障诊断：热力学仿真辅助随机森林
         </h1>
 
         <div style="width: 350px; height: 4px; background: var(--accent-orange); margin: 20px auto;"></div>
 
         <div class="header-btn-group">
-            <a href="https://www.sciencedirect.com/science/article/pii/S0263224125006116?getft_integrator=clarivate&pes=vor&utm_source=clarivate" target="_blank" class="header-btn">
+            <a href="https://www.sciencedirect.com/science/article/pii/S0263224125006116" target="_blank" class="header-btn" data-i18n="btn-fulltext">
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                 全文链接
             </a>
-            <a href="https://ts-rf.github.io/zh-CN/" target="_blank" class="header-btn">
+            <a href="https://ts-rf.github.io/zh-CN/" target="_blank" class="header-btn" data-i18n="btn-github">
                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 原作者 Github 页面
             </a>
@@ -453,33 +381,34 @@
 
 <div class="container">
 
-  <!-- 推荐语/导读部分 -->
+    <!-- 摘要卡片 -->
     <section class="marquee-card">
         <div class="text-content">
-            <p class="abstract-text">
+            <p class="abstract-text" data-i18n="abstract-p1">
                 在故障诊断领域，传统的诊断方法在应对趋向复杂化和集成化的现代工业系统时局限性日益显现，在轨道交通、航天等高可靠性领域，技术人员不敢轻易信任一个“无原因”的诊断结果。
             </p>
-            <p class="abstract-text">
+            <p class="abstract-text" data-i18n="abstract-p2">
                 近日阅读了一篇在 <strong>《Measurement》</strong> 发表的论文：<em>Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines</em>，该论文提出的<strong>热力学仿真辅助随机森林的方法（ThermoRF）</strong>在获取样本和诊断结果可解释这两个关键点上实现平衡，为我以后的学习研究提供了新思路。
             </p>
-            <p class="abstract-text">
+            <p class="abstract-text" data-i18n="abstract-p3">
                 该论文主要内容如下：
             </p>
         </div>
     </section>
+
     <!-- 一、研究背景 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2 id="sec-1">一、研究背景</h2>
+            <h2 id="sec-1" data-i18n="sec-1-title">一、研究背景</h2>
         </div>
         <div class="text-content">
-            <p>在船用柴油机的故障诊断领域，主要有以下问题：</p>
+            <p data-i18n="sec-1-p1">在船用柴油机的故障诊断领域，主要有以下问题：</p>
             <ul>
-                <li><strong>数据匮乏：</strong> 船用柴油机是船舶最核心的设备之一，对其状态的持续监控、故障诊断和预防性维护，是航运业保障航行安全的核心问题。船用柴油机设计初始目标是其极高可靠性和长寿命，因此重大故障率很低，即便发生故障，首要任务是维修而不是记录故障演变的数据。</li>
-                <li><strong>方法缺陷：</strong> 传统船用柴油机的故障诊断方法主要有基于模型的方法、数据驱动方法和混合方法，这三类方法各有利弊，但都无法实现将样本数据和物理模型融合且合理解释特征决策过程。</li>
+                <li data-i18n="sec-1-li1"><strong>数据匮乏：</strong> 船用柴油机是船舶最核心的设备之一，对其状态的持续监控、故障诊断和预防性维护，是航运业保障航行安全的核心问题。船用柴油机设计初始目标是其极高可靠性和长寿命，因此重大故障率很低，即便发生故障，首要任务是维修而不是记录故障演变的数据。</li>
+                <li data-i18n="sec-1-li2"><strong>方法缺陷：</strong> 传统船用柴油机的故障诊断方法主要有基于模型的方法、数据驱动方法和混合方法，这三类方法各有利弊，但都无法实现将样本数据和物理模型融合且合理解释特征决策过程。</li>
             </ul>
 
-            <p style="margin-top: 20px;">
+            <p style="margin-top: 20px;" data-i18n="sec-1-p2">
                 针对上述两大问题，该论文提出了<strong>热力学仿真辅助随机森林（ThermoRF）方法</strong>。其最大特点在于<strong>“模型-数据”协同</strong>，通过物理模型生成丰富的故障数据，结合SHAP值进行智能筛选，并在随机森林（RF）中实现较高精度的可解释故障诊断，发挥了数据驱动与物理建模的互补优势。
             </p>
         </div>
@@ -488,47 +417,46 @@
     <!-- 二、研究方法 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2 id="sec-2">二、研究方法</h2>
+            <h2 id="sec-2" data-i18n="sec-2-title">二、研究方法</h2>
         </div>
         <div class="text-content">
 
-            <h3 id="sec-2-1">1. 热力学建模</h3>
-            <p>构建柴油机一维热力学模型，主要用于模拟故障状态并生成训练数据。该模型建立了六个监测点（MP1至MP6）以获取相关的热力学参数，通过后续与来源于数据采集模块（DCM）的真实船舶航行数据校准，该模型的热力学参数在仿真条件下与真实测量偏差小于5%，这种一致性验证了模型的可靠性。</p>
+            <h3 id="sec-2-1" data-i18n="sec-2-1-title">1. 热力学建模</h3>
+            <p data-i18n="sec-2-1-p1">构建柴油机一维热力学模型，主要用于模拟故障状态并生成训练数据。该模型建立了六个监测点（MP1至MP6）以获取相关的热力学参数，通过后续与来源于数据采集模块（DCM）的真实船舶航行数据校准，该模型的热力学参数在仿真条件下与真实测量偏差小于5%，这种一致性验证了模型的可靠性。</p>
 
-            <!-- 修改重点：200px高度，防止溢出 -->
             <div class="dual-image-row">
                 <div class="image-wrapper">
                     <img src="1.jpg" alt="柴油机一维热力学模型">
-                    <span class="caption">图1 柴油机一维热力学模型</span>
+                    <span class="caption" data-i18n="fig-1-caption">图1 柴油机一维热力学模型</span>
                 </div>
                 <div class="image-wrapper">
                     <img src="4.jpg" alt="数据采集模块 (DCM)">
-                    <span class="caption">图2 数据采集模块（DCM）</span>
+                    <span class="caption" data-i18n="fig-2-caption">图2 数据采集模块（DCM）</span>
                 </div>
             </div>
 
-            <h3 id="sec-2-2">2. 故障建模</h3>
-            <p>基于建立好的柴油机一维热力学模型，通过微调参数将燃烧室组件的健康状态设定为正常状态（F0）、气缸盖开裂（F1）、活塞烧蚀（F2）、缸套磨损（F3）、活塞环磨损（F4）和活塞环粘着（F5）六个不同状态，从而生成五种不同故障的高保真数据集。</p>
+            <h3 id="sec-2-2" data-i18n="sec-2-2-title">2. 故障建模</h3>
+            <p data-i18n="sec-2-2-p1">基于建立好的柴油机一维热力学模型，通过微调参数将燃烧室组件的健康状态设定为正常状态（F0）、气缸盖开裂（F1）、活塞烧蚀（F2）、缸套磨损（F3）、活塞环磨损（F4）和活塞环粘着（F5）六个不同状态，从而生成五种不同故障的高保真数据集。</p>
 
             <div class="media-container">
                 <img src="9.PNG" alt="故障模拟示意图">
-                <span class="caption">表1 故障状态细节</span>
+                <span class="caption" data-i18n="table-1-caption">表1 故障状态细节</span>
             </div>
 
-            <h3 id="sec-2-3">3. 选择参数</h3>
-            <p>首先由构建的柴油机一维热力学模型输出14个具有显著状态评估诊断潜力的热力学参数，随后通过计算SHAP值量化这些参数的重要性并进行排序，将前8个重要特征参数组成优化子集。</p>
+            <h3 id="sec-2-3" data-i18n="sec-2-3-title">3. 选择参数</h3>
+            <p data-i18n="sec-2-3-p1">首先由构建的柴油机一维热力学模型输出14个具有显著状态评估诊断潜力的热力学参数，随后通过计算SHAP值量化这些参数的重要性并进行排序，将前8个重要特征参数组成优化子集。</p>
 
             <div class="media-container">
                 <img src="2.jpg" alt="特征选择过程">
-                <span class="caption">图3 基于SHAP的参数选择过程</span>
+                <span class="caption" data-i18n="fig-3-caption">图3 基于SHAP的参数选择过程</span>
             </div>
 
-            <h3 id="sec-2-4">4. 故障识别</h3>
-            <p>将包含8个热力学参数的精炼子集输入至随机森林分类器（RF）进行故障诊断，该模型在样本有限的情况下表现出较高的诊断分类能力。</p>
+            <h3 id="sec-2-4" data-i18n="sec-2-4-title">4. 故障识别</h3>
+            <p data-i18n="sec-2-4-p1">将包含8个热力学参数的精炼子集输入至随机森林分类器（RF）进行故障诊断，该模型在样本有限的情况下表现出较高的诊断分类能力。</p>
 
             <div class="media-container">
                 <img src="3.jpg" alt="随机森林分类流程">
-                <span class="caption">图4 ThermoRF 故障诊断模型架构</span>
+                <span class="caption" data-i18n="fig-4-caption">图4 ThermoRF 故障诊断模型架构</span>
             </div>
         </div>
     </section>
@@ -536,19 +464,19 @@
     <!-- 三、数据与仿真 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2 id="sec-3">三、数据与仿真</h2>
+            <h2 id="sec-3" data-i18n="sec-3-title">三、数据与仿真</h2>
         </div>
         <div class="text-content">
 
-            <h3 id="sec-3-1">1. 实验数据集</h3>
-            <p>从构建的柴油机一维热力学模型完整运行周期的仿真结果中提取，样本比例按照训练：测试=7：3。该数据集涵盖了不同工况下的丰富样本，确保了模型训练的鲁棒性。</p>
+            <h3 id="sec-3-1" data-i18n="sec-3-1-title">1. 实验数据集</h3>
+            <p data-i18n="sec-3-1-p1">从构建的柴油机一维热力学模型完整运行周期的仿真结果中提取，样本比例按照训练：测试=7：3。该数据集涵盖了不同工况下的丰富样本，确保了模型训练的鲁棒性。</p>
 
-            <h3 id="sec-3-2">2. 仿真结果</h3>
-            <p>识别出14个具有显著状态评估诊断潜力的热力学参数，例如气缸压力、气缸温度、活塞壁热流等。下图展示气缸压力、气缸温度、活塞壁热流在不同健康状态下的变化：</p>
+            <h3 id="sec-3-2" data-i18n="sec-3-2-title">2. 仿真结果</h3>
+            <p data-i18n="sec-3-2-p1">识别出14个具有显著状态评估诊断潜力的热力学参数，例如气缸压力、气缸温度、活塞壁热流等。下图展示气缸压力、气缸温度、活塞壁热流在不同健康状态下的变化：</p>
 
             <div class="media-container">
                 <img src="5.PNG" alt="热力学参数变化曲线">
-                <span class="caption">图5 故障仿真结果：（a）气缸压力；（b）气缸温度；（c）活塞壁热流</span>
+                <span class="caption" data-i18n="fig-5-caption">图5 故障仿真结果：（a）气缸压力；（b）气缸温度；（c）活塞壁热流</span>
             </div>
 
         </div>
@@ -557,45 +485,45 @@
     <!-- 四、研究成果 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2 id="sec-4">四、研究成果</h2>
+            <h2 id="sec-4" data-i18n="sec-4-title">四、研究成果</h2>
         </div>
         <div class="text-content">
 
-            <h3 id="sec-4-1">1. 筛选参数</h3>
-            <p>从14个热力学参数中，基于SHAP值选取重要性最高且最具评估意义的8个参数用于故障诊断。</p>
+            <h3 id="sec-4-1" data-i18n="sec-4-1-title">1. 筛选参数</h3>
+            <p data-i18n="sec-4-1-p1">从14个热力学参数中，基于SHAP值选取重要性最高且最具评估意义的8个参数用于故障诊断。</p>
 
             <div class="media-container">
                 <img src="6.jpg" alt="基于SHAP值的参数筛选结果">
-                <span class="caption">图6 基于SHAP值的热力学参数的重要性：（a）SHAP值的热图；（b）柱状叠加图；（c）百分比图表。</span>
+                <span class="caption" data-i18n="fig-6-caption">图6 基于SHAP值的热力学参数的重要性：（a）SHAP值的热图；（b）柱状叠加图；（c）百分比图表。</span>
             </div>
-            <div style="text-align: center; margin-bottom: 10px; font-weight: 700; color: var(--primary-blue);">ThermoRF 关键核心参数</div>
+            <div style="text-align: center; margin-bottom: 10px; font-weight: 700; color: var(--primary-blue);" data-i18n="key-param-title">ThermoRF 关键核心参数</div>
             <div class="param-grid-container">
-                <div class="param-item">P05-缸套壁热流</div>
-                <div class="param-item">P14-涡轮后排气温度</div>
-                <div class="param-item">P03-活塞壁热流</div>
-                <div class="param-item">P06-窜气热流</div>
-                <div class="param-item">P07-窜气质量流量</div>
-                <div class="param-item">P11-涡轮前排气压力</div>
-                <div class="param-item">P12-涡轮前排气温度</div>
-                <div class="param-item">P04-缸盖壁热流</div>
+                <div class="param-item" data-i18n="param-1">P05-缸套壁热流</div>
+                <div class="param-item" data-i18n="param-2">P14-涡轮后排气温度</div>
+                <div class="param-item" data-i18n="param-3">P03-活塞壁热流</div>
+                <div class="param-item" data-i18n="param-4">P06-窜气热流</div>
+                <div class="param-item" data-i18n="param-5">P07-窜气质量流量</div>
+                <div class="param-item" data-i18n="param-6">P11-涡轮前排气压力</div>
+                <div class="param-item" data-i18n="param-7">P12-涡轮前排气温度</div>
+                <div class="param-item" data-i18n="param-8">P04-缸盖壁热流</div>
             </div>
 
-            <p style="text-align: center; color: #888; font-size: 0.9rem; margin-top: 10px; margin-bottom: 40px;">
+            <p style="text-align: center; color: #888; font-size: 0.9rem; margin-top: 10px; margin-bottom: 40px;" data-i18n="key-param-note">
                 *筛选出的8个关键热力学参数实时协同输入,驱动模型实现可解释性诊断*
             </p>
 
-            <h3 id="sec-4-2">2. 效果对比</h3>
+            <h3 id="sec-4-2" data-i18n="sec-4-2-title">2. 效果对比</h3>
 
-            <p style="font-weight: 700; margin-top: 20px;">(1) 分类器对比</p>
-            <p>基于随机森林（RF）分类器进行分类，在原始数据集和优化子集上与K近邻（KNN）分类器、支持向量机（SVM）对比6个健康状态的评估指标，包括精度、召回率、F1分数和准确率。结果表明，RF在实验构建的数据集中表现优于KNN和SVM。</p>
+            <p style="font-weight: 700; margin-top: 20px;" data-i18n="sec-4-2-sub1-title">(1) 分类器对比</p>
+            <p data-i18n="sec-4-2-p1">基于随机森林（RF）分类器进行分类，在原始数据集和优化子集上与K近邻（KNN）分类器、支持向量机（SVM）对比6个健康状态的评估指标，包括精度、召回率、F1分数和准确率。结果表明，RF在实验构建的数据集中表现优于KNN和SVM。</p>
 
             <div class="media-container">
                 <img src="7.jpg" alt="不同分类器性能对比柱状图">
-                <span class="caption">图7 (a)-(c)分别呈现原始数据集上的KNN、SVM和RF的精度-召回率曲线</span>
+                <span class="caption" data-i18n="fig-7-caption">图7 (a)-(c)分别呈现原始数据集上的KNN、SVM和RF的精度-召回率曲线</span>
             </div>
 
-            <p style="font-weight: 700; margin-top: 20px;">(2) 参数选择方法对比</p>
-            <p>将基于SHAP值法与传统的卡方检验(Chi-Square)、递归特征消除(RFE)和Gini指数进行对比。结果表明，在实验构建的数据集中，基于SHAP值的方法在RF中的平均准确率高达99.07%，高于Chi-Square（78.51%）、RFE（81.62%）、Gini（88.95%）。</p>
+            <p style="font-weight: 700; margin-top: 20px;" data-i18n="sec-4-2-sub2-title">(2) 参数选择方法对比</p>
+            <p data-i18n="sec-4-2-p2">将基于SHAP值法与传统的卡方检验(Chi-Square)、递归特征消除(RFE)和Gini指数进行对比。结果表明，在实验构建的数据集中，基于SHAP值的方法在RF中的平均准确率高达99.07%，高于Chi-Square（78.51%）、RFE（81.62%）、Gini（88.95%）。</p>
 
         </div>
     </section>
@@ -603,28 +531,26 @@
     <!-- 五、亮点——双尺度可解释性 -->
     <section class="section-card">
         <div class="section-title-wrap">
-            <h2 id="sec-5">五、亮点——双尺度可解释性</h2>
+            <h2 id="sec-5" data-i18n="sec-5-title">五、亮点——双尺度可解释性</h2>
         </div>
         <div class="text-content">
-             <p>该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。</p>
+             <p data-i18n="sec-5-p1">该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。</p>
             <ul>
-                <li><strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。</li>
-                <li><strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。</li>
+                <li data-i18n="sec-5-li1"><strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。</li>
+                <li data-i18n="sec-5-li2"><strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。</li>
             </ul>
 
             <div class="media-container">
                 <img src="8.jpg" alt="SHAP双尺度可解释性可视化">
-                <span class="caption">图8 基于SHAP值的活塞环磨损(F4)故障分析：(a)瀑布图；(b)蜂群图；(c)交互图；(d)依赖图</span>
+                <span class="caption" data-i18n="fig-8-caption">图8 基于SHAP值的活塞环磨损(F4)故障分析：(a)瀑布图；(b)蜂群图；(c)交互图；(d)依赖图</span>
             </div>
         </div>
     </section>
 
    <section class="section-card">
-        <!-- 使用与其他章节相同的标题包裹层，实现统一样式 -->
         <div class="section-title-wrap">
-            <h2 id="sec-6">原始文献</h2>
+            <h2 id="sec-6" data-i18n="sec-6-title">原始文献</h2>
         </div>
-
         <div class="text-content">
             <div style="font-size: 0.95rem; color: #555; background: #f9f9f9; padding: 15px; border-radius: 4px;">
                 <p style="margin-bottom: 0;">C. Luo, M. Zhao, X. Fu, S. Zhong, S. Fu, K. Zhang, X. Yu. Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines[J]. Measurement, 2025, 251: 117252.</p>
@@ -636,8 +562,8 @@
 
 <footer class="simple-footer">
     <div class="footer-content">
-        <div class="footer-logo">ThermoRF</div>
-        <p class="footer-desc">
+        <div class="footer-logo" data-i18n="footer-logo">ThermoRF</div>
+        <p class="footer-desc" data-i18n="footer-desc">
             可解释故障诊断<br>
             热力学仿真辅助随机森林
         </p>
@@ -646,52 +572,336 @@
         </div>
     </div>
 </footer>
-<!-- 灯箱遮罩层结构 -->
+
 <div id="lightbox" class="lightbox-overlay">
     <span class="lightbox-close">&times;</span>
     <img class="lightbox-content" id="lightbox-img" src="" alt="放大图片">
 </div>
+
 <script>
-    // 获取灯箱元素
+    /* =========================================
+       语言资源配置区
+       ========================================= */
+    const translations = {
+        // --- 中文 (保持不变) ---
+        "zh-CN": {
+            "browser-title": "可解释故障诊断：热力学仿真辅助随机森林",
+            "nav-title": "导航栏",
+            "nav-sec-1": "一、研究背景",
+            "nav-sec-2": "二、研究方法",
+            "nav-sec-2-1": "1. 热力学建模",
+            "nav-sec-2-2": "2. 故障建模",
+            "nav-sec-2-3": "3. 选择参数",
+            "nav-sec-2-4": "4. 故障识别",
+            "nav-sec-3": "三、数据与仿真",
+            "nav-sec-3-1": "1. 实验数据集",
+            "nav-sec-3-2": "2. 仿真结果",
+            "nav-sec-4": "四、研究成果",
+            "nav-sec-4-1": "1. 筛选参数",
+            "nav-sec-4-2": "2. 效果对比",
+            "nav-sec-5": "五、亮点—可解释性",
+            "nav-sec-6": "原始文献",
+
+            "main-title": "<span style='color: #b71c1c;'>【学习笔记】</span>可解释故障诊断：热力学仿真辅助随机森林",
+            "btn-fulltext": "全文链接",
+            "btn-github": "原作者 Github 页面",
+
+            "abstract-p1": "在故障诊断领域，传统的诊断方法在应对趋向复杂化和集成化的现代工业系统时局限性日益显现，在轨道交通、航天等高可靠性领域，技术人员不敢轻易信任一个“无原因”的诊断结果。",
+            "abstract-p2": "近日阅读了一篇在 <strong>《Measurement》</strong> 发表的论文：<em>Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines</em>，该论文提出的<strong>热力学仿真辅助随机森林的方法（ThermoRF）</strong>在获取样本和诊断结果可解释这两个关键点上实现平衡，为我以后的学习研究提供了新思路。",
+            "abstract-p3": "该论文主要内容如下：",
+
+            "sec-1-title": "一、研究背景",
+            "sec-1-p1": "在船用柴油机的故障诊断领域，主要有以下问题：",
+            "sec-1-li1": "<strong>数据匮乏：</strong> 船用柴油机是船舶最核心的设备之一，对其状态的持续监控、故障诊断和预防性维护，是航运业保障航行安全的核心问题。船用柴油机设计初始目标是其极高可靠性和长寿命，因此重大故障率很低，即便发生故障，首要任务是维修而不是记录故障演变的数据。",
+            "sec-1-li2": "<strong>方法缺陷：</strong> 传统船用柴油机的故障诊断方法主要有基于模型的方法、数据驱动方法和混合方法，这三类方法各有利弊，但都无法实现将样本数据和物理模型融合且合理解释特征决策过程。",
+            "sec-1-p2": "针对上述两大问题，该论文提出了<strong>热力学仿真辅助随机森林（ThermoRF）方法</strong>。其最大特点在于<strong>“模型-数据”协同</strong>，通过物理模型生成丰富的故障数据，结合SHAP值进行智能筛选，并在随机森林（RF）中实现较高精度的可解释故障诊断，发挥了数据驱动与物理建模的互补优势。",
+
+            "sec-2-title": "二、研究方法",
+            "sec-2-1-title": "1. 热力学建模",
+            "sec-2-1-p1": "构建柴油机一维热力学模型，主要用于模拟故障状态并生成训练数据。该模型建立了六个监测点（MP1至MP6）以获取相关的热力学参数，通过后续与来源于数据采集模块（DCM）的真实船舶航行数据校准，该模型的热力学参数在仿真条件下与真实测量偏差小于5%，这种一致性验证了模型的可靠性。",
+            "fig-1-caption": "图1 柴油机一维热力学模型",
+            "fig-2-caption": "图2 数据采集模块（DCM）",
+
+            "sec-2-2-title": "2. 故障建模",
+            "sec-2-2-p1": "基于建立好的柴油机一维热力学模型，通过微调参数将燃烧室组件的健康状态设定为正常状态（F0）、气缸盖开裂（F1）、活塞烧蚀（F2）、缸套磨损（F3）、活塞环磨损（F4）和活塞环粘着（F5）六个不同状态，从而生成五种不同故障的高保真数据集。",
+            "table-1-caption": "表1 故障状态细节",
+
+            "sec-2-3-title": "3. 选择参数",
+            "sec-2-3-p1": "首先由构建的柴油机一维热力学模型输出14个具有显著状态评估诊断潜力的热力学参数，随后通过计算SHAP值量化这些参数的重要性并进行排序，将前8个重要特征参数组成优化子集。",
+            "fig-3-caption": "图3 基于SHAP的参数选择过程",
+
+            "sec-2-4-title": "4. 故障识别",
+            "sec-2-4-p1": "将包含8个热力学参数的精炼子集输入至随机森林分类器（RF）进行故障诊断，该模型在样本有限的情况下表现出较高的诊断分类能力。",
+            "fig-4-caption": "图4 ThermoRF 故障诊断模型架构",
+
+            "sec-3-title": "三、数据与仿真",
+            "sec-3-1-title": "1. 实验数据集",
+            "sec-3-1-p1": "从构建的柴油机一维热力学模型完整运行周期的仿真结果中提取，样本比例按照训练：测试=7：3。该数据集涵盖了不同工况下的丰富样本，确保了模型训练的鲁棒性。",
+
+            "sec-3-2-title": "2. 仿真结果",
+            "sec-3-2-p1": "识别出14个具有显著状态评估诊断潜力的热力学参数，例如气缸压力、气缸温度、活塞壁热流等。下图展示气缸压力、气缸温度、活塞壁热流在不同健康状态下的变化：",
+            "fig-5-caption": "图5 故障仿真结果：（a）气缸压力；（b）气缸温度；（c）活塞壁热流",
+
+            "sec-4-title": "四、研究成果",
+            "sec-4-1-title": "1. 筛选参数",
+            "sec-4-1-p1": "从14个热力学参数中，基于SHAP值选取重要性最高且最具评估意义的8个参数用于故障诊断。",
+            "fig-6-caption": "图6 基于SHAP值的热力学参数的重要性：（a）SHAP值的热图；（b）柱状叠加图；（c）百分比图表。",
+            "key-param-title": "ThermoRF 关键核心参数",
+            "param-1": "P05-缸套壁热流",
+            "param-2": "P14-涡轮后排气温度",
+            "param-3": "P03-活塞壁热流",
+            "param-4": "P06-窜气热流",
+            "param-5": "P07-窜气质量流量",
+            "param-6": "P11-涡轮前排气压力",
+            "param-7": "P12-涡轮前排气温度",
+            "param-8": "P04-缸盖壁热流",
+            "key-param-note": "*筛选出的8个关键热力学参数实时协同输入,驱动模型实现可解释性诊断*",
+
+            "sec-4-2-title": "2. 效果对比",
+            "sec-4-2-sub1-title": "(1) 分类器对比",
+            "sec-4-2-p1": "基于随机森林（RF）分类器进行分类，在原始数据集和优化子集上与K近邻（KNN）分类器、支持向量机（SVM）对比6个健康状态的评估指标，包括精度、召回率、F1分数和准确率。结果表明，RF在实验构建的数据集中表现优于KNN和SVM。",
+            "fig-7-caption": "图7 (a)-(c)分别呈现原始数据集上的KNN、SVM和RF的精度-召回率曲线",
+            "sec-4-2-sub2-title": "(2) 参数选择方法对比",
+            "sec-4-2-p2": "将基于SHAP值法与传统的卡方检验(Chi-Square)、递归特征消除(RFE)和Gini指数进行对比。结果表明，在实验构建的数据集中，基于SHAP值的方法在RF中的平均准确率高达99.07%，高于Chi-Square（78.51%）、RFE（81.62%）、Gini（88.95%）。",
+
+            "sec-5-title": "五、亮点——双尺度可解释性",
+            "sec-5-p1": "该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。",
+            "sec-5-li1": "<strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。",
+            "sec-5-li2": "<strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。",
+            "fig-8-caption": "图8 基于SHAP值的活塞环磨损(F4)故障分析：(a)瀑布图；(b)蜂群图；(c)交互图；(d)依赖图",
+
+            "sec-6-title": "原始文献",
+            "footer-logo": "ThermoRF",
+            "footer-desc": "可解释故障诊断<br>热力学仿真辅助随机森林"
+        },
+
+        // --- English (Fixed: Quotes are now escaped) ---
+        "en": {
+            "browser-title": "Explainable Fault Diagnosis: Thermodynamic Simulation-Assisted Random Forest",
+            "nav-title": "Navigation",
+            "nav-sec-1": "I. Research Background",
+            "nav-sec-2": "II. Research Methodology",
+            "nav-sec-2-1": "1. Thermodynamic Modeling",
+            "nav-sec-2-2": "2. Fault Modeling",
+            "nav-sec-2-3": "3. Parameter Selection",
+            "nav-sec-2-4": "4. Fault Identification",
+            "nav-sec-3": "III. Data and Simulation",
+            "nav-sec-3-1": "1. Experimental Dataset",
+            "nav-sec-3-2": "2. Simulation Results",
+            "nav-sec-4": "IV. Research Results",
+            "nav-sec-4-1": "1. Parameter Screening",
+            "nav-sec-4-2": "2. Performance Comparison",
+            "nav-sec-5": "V. Highlights:Dual-scale Explainability",
+            "nav-sec-6": "Original Literature",
+
+            "main-title": "<span style='color: #b71c1c;'>[Study Notes]</span> Explainable Fault Diagnosis: Thermodynamic Simulation-Assisted Random Forest",
+            "btn-fulltext": "Full Text Link",
+            "btn-github": "Author's Github",
+
+            "abstract-p1": "In the field of fault diagnosis, the limitations of traditional diagnostic methods are increasingly apparent when dealing with modern industrial systems that are becoming more complex and integrated. In high-reliability sectors such as rail transit and aerospace, technicians are reluctant to trust a \"reasonless\" diagnostic result.",
+            "abstract-p2": "I recently read a paper published in <strong>Measurement</strong> titled: \"Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines.\" The<strong> thermodynamic simulation-assisted Random Forest (ThermoRF)</strong> approach proposed in this paper achieves a balance between two critical challenges—sample acquisition and the explainability of diagnostic results—providing new insights for my future studies and research.",
+            "abstract-p3": "The main contents of the paper are as follows:",
+
+            "sec-1-title": "I. Research Background",
+            "sec-1-p1": "In the field of fault diagnosis for marine diesel engines, the primary problems are:",
+            "sec-1-li1": "<strong>Data Scarcity:</strong> Marine diesel engines are among the most critical components of a vessel. Continuous condition monitoring, fault diagnosis, and preventive maintenance are central to ensuring maritime safety. Since these engines are designed for extreme reliability and longevity, major fault rates are very low. Even when failures occur, the priority is repair rather than recording data on fault evolution.",
+            "sec-1-li2": "<strong>Methodological Defects:</strong> Traditional fault diagnosis methods for marine diesel engines primarily include model-based, data-driven, and hybrid methods. While each has its pros and cons, none effectively integrate sample data with physical models while providing a reasonable explanation of the feature decision-making process.",
+            "sec-1-p2": "To address these two issues, this paper proposes the ThermoRF method. Its most prominent feature is the \"model-data\" synergy: it generates extensive fault data via physical models, utilizes SHAP values for intelligent screening, and achieves high-precision explainable fault diagnosis within a Random Forest (RF) framework, leveraging the complementary advantages of data-driven approaches and physical modeling.",
+
+            "sec-2-title": "II. Research Methodology",
+            "sec-2-1-title": "1. Thermodynamic Modeling",
+            "sec-2-1-p1": "A one-dimensional (1D) thermodynamic model of the diesel engine was constructed, primarily to simulate fault states and generate training data. Six monitoring points (MP1 to MP6) were established to acquire relevant thermodynamic parameters. Following calibration with real ship navigation data from the Data Acquisition Module (DCM), the model's thermodynamic parameters showed a deviation of less than 5% compared to real measurements under simulation conditions. This consistency validates the model's reliability.",
+            "fig-1-caption": "Fig 1. 1D Thermodynamic Model of Diesel Engine",
+            "fig-2-caption": "Fig 2. Data Acquisition Module (DCM)",
+
+            "sec-2-2-title": "2. Fault Modeling",
+            "sec-2-2-p1": "Based on the established 1D thermodynamic model, the health status of combustion chamber components was set to six different states by fine-tuning parameters: normal state (F0), cylinder head cracking (F1), piston ablation (F2), liner wear (F3), piston ring wear (F4), and piston ring sticking (F5). This resulted in a high-fidelity dataset encompassing five different fault types.",
+            "table-1-caption": "Table 1. Fault Status Details",
+
+            "sec-2-3-title": "3. Parameter Selection",
+            "sec-2-3-p1": "Initially, 14 thermodynamic parameters with significant potential for condition assessment and diagnosis were output by the 1D thermodynamic model. Subsequently, SHAP values were calculated to quantify and rank the importance of these parameters, with the top 8 key features forming an optimized subset.",
+            "fig-3-caption": "Fig 3. SHAP-based Parameter Selection Process",
+
+            "sec-2-4-title": "4. Fault Identification",
+            "sec-2-4-p1": "The refined subset containing the 8 selected thermodynamic parameters was fed into a Random Forest (RF) classifier for fault diagnosis. This model demonstrated high diagnostic classification capability even with limited samples.",
+            "fig-4-caption": "Fig 4. ThermoRF Fault Diagnosis Architecture",
+
+            "sec-3-title": "III. Data and Simulation",
+            "sec-3-1-title": "1. Experimental Dataset",
+            "sec-3-1-p1": "Extracted from the simulation results of a full operating cycle of the constructed 1D thermodynamic model, with a training-to-test sample ratio of 7:3.",
+
+            "sec-3-2-title": "2. Simulation Results",
+            "sec-3-2-p1": "14 thermodynamic parameters with significant potential for condition assessment and diagnosis were identified, such as cylinder pressure, cylinder temperature, and piston wall heat flow.The following figure illustrates the variations in cylinder pressure, cylinder temperature, and piston wall heat flow under different health states:",
+            "fig-5-caption": "Fig 5. Simulation Results: (a) Cylinder Pressure; (b) Cylinder Temperature; (c) Piston Wall Heat Flow",
+
+            "sec-4-title": "IV. Research Results",
+            "sec-4-1-title": "1. Parameter Screening",
+            "sec-4-1-p1": "From the 14 thermodynamic parameters, the 8 with the highest importance and greatest evaluative significance were selected for fault diagnosis based on SHAP values.",
+            "fig-6-caption": "Fig 6. Parameter Importance via SHAP: (a) Heatmap; (b) Bar Plot; (c) Percentage Chart",
+            "key-param-title": "ThermoRF Key Parameters",
+            "param-1": "P05 (liner wall heat flow)",
+            "param-2": "P14 (turbine outlet exhaust temperature)",
+            "param-3": "P03 (piston wall heat flow)",
+            "param-4": "P06 (blow-by heat flow)",
+            "param-5": "P07 (blow-by mass flow rate)",
+            "param-6": "P11 (turbine inlet exhaust pressure)",
+            "param-7": "P12 (turbine inlet exhaust temperature)",
+            "param-8": "P04 (cylinder head wall heat flow)",
+            "key-param-note": "*The 8 selected parameters are fed into the model for explainable diagnosis*",
+
+            "sec-4-2-title": "2. Performance Comparison",
+            "sec-4-2-sub1-title": "(1) Classifiers",
+            "sec-4-2-p1": "Classification was performed using a Random Forest (RF) classifier. Evaluation metrics for the six health states—including precision, recall, F1-score, and accuracy—were compared against K-Nearest Neighbors (KNN) and Support Vector Machines (SVM) on both the original dataset and the optimized subset. The results indicate that RF outperformed KNN and SVM in the experimentally constructed dataset.",
+            "fig-7-caption": "Fig 7. Precision-Recall curves for (a) KNN, (b) SVM, and (c) RF.",
+            "sec-4-2-sub2-title": "(2) Parameter Selection Methods",
+            "sec-4-2-p2": "The SHAP-based method was compared with traditional methods such as Chi-Square, Recursive Feature Elimination (RFE), and Gini index. Results show that in the experimental dataset, the SHAP-based approach achieved an average accuracy of 99.07% in RF, significantly higher than Chi-Square (78.51%), RFE (81.62%), and Gini (88.95%).",
+
+            "sec-5-title": "V. Highlights—Dual-scale Explainability",
+            "sec-5-p1": "A major highlight of this paper is the dual-scale analysis of explainability, which makes the determination of fault categories transparent. The paper analyzes piston ring wear (F4) as a representative case.",
+            "sec-5-li1": "<strong>Local Explanation:</strong> Waterfall plots are used as a visualization tool to clearly parse the model's decision logic for individual samples. Piston ring wear exacerbates blow-by, a physical law integrated into the model. This results in specific values for blow-by heat flow (P06) and blow-by mass flow rate (P07), directly influencing the model's prediction.",
+            "sec-5-li2": "<strong>Global Explanation:</strong> Beeswarm plots, interaction plots, and dependence plots are used as visualization tools to extract core monitoring indicators from a holistic perspective. Blow-by, or gas leakage, leads to a reduction in turbine inlet exhaust pressure (P11). Furthermore, the more severe the blow-by, the lower the blow-by heat flow (P06) and blow-by mass flow rate (P07). These three types of global explanation plots reveal this physical law, indicating that these parameters can serve as effective indicators for identifying piston ring wear.",
+            "fig-8-caption": "Fig 8. SHAP Analysis for Fault F4: (a) Waterfall; (b) Beeswarm; (c) Interaction; (d) Dependence",
+
+            "sec-6-title": "Original Literature",
+            "footer-logo": "ThermoRF",
+            "footer-desc": "Explainable Fault Diagnosis<br>Thermo-Simulation Assisted RF"
+        },
+
+        // --- Français ---
+        "fr": {
+            "browser-title": "Diagnostic de pannes explicable : Forêt aléatoire assistée par simulation thermodynamique",
+            "nav-title": "Barre de navigation",
+            "nav-sec-1": "I. Contexte de la recherche",
+            "nav-sec-2": "II. Méthodologie de recherche",
+            "nav-sec-2-1": "1. Modélisation thermodynamique",
+            "nav-sec-2-2": "2. Modélisation des défaillances",
+            "nav-sec-2-3": "3. Sélection des paramètres",
+            "nav-sec-2-4": "4. Identification des défaillances",
+            "nav-sec-3": "III. Données et simulation",
+            "nav-sec-3-1": "1. Jeu de données expérimental",
+            "nav-sec-3-2": "2. Résultats de la simulation",
+            "nav-sec-4": "IV. Résultats de la recherche",
+            "nav-sec-4-1": "1. Paramètres sélectionnés",
+            "nav-sec-4-2": "2. Comparaison des performances",
+            "nav-sec-5": "V. Point fort — Explicabilité à double échelle",
+            "nav-sec-6": "Article de référence",
+
+            "main-title": "<span style='color: #b71c1c;'>[Notes d'étude] </span>Diagnostic de pannes explicable : Forêt aléatoire assistée par simulation thermodynamique",
+            "btn-fulltext": "Lien vers l'article complet",
+            "btn-github": "Page GitHub de l'auteur",
+
+            "abstract-p1": "Dans le domaine du diagnostic de pannes, les limites des méthodes de diagnostic traditionnelles deviennent de plus en plus évidentes face aux systèmes industriels modernes de plus en plus complexes et intégrés. Dans les secteurs à haute fiabilité tels que le transport ferroviaire et l'aérospatiale, les techniciens hésitent à accorder leur confiance à un résultat de diagnostic « sans cause ».",
+            "abstract-p2": "J'ai récemment lu un article publié dans la revue <strong>Measurement</strong> intitulé : « Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines ». La méthode de <strong>forêt aléatoire assistée par simulation thermodynamique (ThermoRF)</strong> proposée dans cet article parvient à un équilibre entre deux points cruciaux — l'acquisition d'échantillons et l'explicabilité des résultats de diagnostic — ouvrant de nouvelles perspectives pour mes futures recherches.",
+            "abstract-p3": "Le contenu principal de cet article se présente comme suit :",
+
+            "sec-1-title": "I. Contexte de la recherche",
+            "sec-1-p1": "Dans le domaine du diagnostic de pannes des moteurs diesel marins, les principaux problèmes sont les suivants :",
+            "sec-1-li1": "<strong>Pénurie de données :</strong> Le moteur diesel marin est l'un des équipements les plus essentiels d'un navire. La surveillance continue de son état, le diagnostic de pannes et la maintenance préventive sont des enjeux cruciaux pour la sécurité de la navigation. Ces moteurs étant conçus pour une fiabilité et une longévité extrêmes, le taux de pannes majeures est très faible. Même en cas de panne, la priorité est la réparation plutôt que l'enregistrement de l'évolution des données de panne.",
+            "sec-1-li2": "<strong>Défauts méthodologiques :</strong> Les méthodes traditionnelles de diagnostic de pannes pour les moteurs diesel marins comprennent principalement des approches basées sur des modèles, pilotées par les données ou hybrides. Bien que ces trois catégories présentent des avantages et des inconvénients, aucune ne parvient à fusionner les données d'échantillons avec les modèles physiques tout en expliquant de manière cohérente le processus de décision des caractéristiques.",
+            "sec-1-p2": "Pour répondre à ces deux problèmes, cet article propose la méthode ThermoRF. Sa caractéristique principale est la synergie « modèle-données » : elle génère d'abondantes données de pannes via des modèles physiques, utilise les valeurs SHAP pour un filtrage intelligent et réalise un diagnostic de pannes explicable de haute précision au sein d'une Random Forest (RF), tirant ainsi parti des avantages complémentaires de l'approche pilotée par les données et de la modélisation physique.",
+
+            "sec-2-title": "II. Méthodologie de recherche",
+            "sec-2-1-title": "1. Modélisation thermodynamique",
+            "sec-2-1-p1": "Un modèle thermodynamique unidimensionnel (1D) du moteur diesel a été construit, principalement pour simuler des états de pannes et générer des données d'entraînement. Six points de surveillance (MP1 à MP6) ont été établis pour acquérir les paramètres thermodynamiques pertinents. Après calibrage avec des données de navigation réelles provenant du module d'acquisition de données (DCM), les paramètres thermodynamiques du modèle ont montré un écart inférieur à 5 % par rapport aux mesures réelles en conditions de simulation. Cette cohérence valide la fiabilité du modèle.",
+            "fig-1-caption": "Fig 1. Modèle thermodynamique 1D du moteur diesel",
+            "fig-2-caption": "Fig 2. Module d'acquisition de données (DCM)",
+
+            "sec-2-2-title": "2. Modélisation des défaillances",
+            "sec-2-2-p1": "Sur la base d'un modèle thermodynamique unidimensionnel (1D) de moteur diesel préétabli, les paramètres sont ajustés avec précision pour configurer l'état de santé des composants de la chambre de combustion selon six états distincts : état normal (F0), fissuration de la culasse (F1), ablation du piston (F2), usure de la chemise (F3), usure des segments (F4) et gommage des segments (F5). Cette procédure permet ainsi de générer un jeu de données haute fidélité couvrant ces cinq types de défaillances.",
+            "table-1-caption": "Tableau 1. Détails des états de défaillance",
+
+            "sec-2-3-title": "3. Sélection des paramètres",
+            "sec-2-3-p1": "Dans un premier temps, 14 paramètres thermodynamiques, présentant un potentiel significatif pour le diagnostic et l'évaluation de l'état, sont extraits du modèle thermodynamique 1D du moteur diesel. Par la suite, l'importance de ces paramètres est quantifiée et hiérarchisée via le calcul des valeurs SHAP. Enfin, les 8 paramètres caractéristiques les plus importants sont retenus pour constituer un sous-ensemble optimisé.",
+            "fig-3-caption": "Fig 3. Processus de sélection des paramètres basé sur SHAP",
+
+            "sec-2-4-title": "4. Identification des défaillances ",
+            "sec-2-4-p1": "Le sous-ensemble affiné, contenant les 8 paramètres thermodynamiques sélectionnés, est introduit dans un classificateur de type forêts aléatoires (RF) afin de réaliser le diagnostic des défaillances. Ce modèle démontre une capacité de classification diagnostique élevée, même en présence d'un nombre limité d'échantillons.",
+            "fig-4-caption": "Fig 4. Architecture du modèle de diagnostic des défaillances ThermoRF",
+
+            "sec-3-title": "III. Données et simulation",
+            "sec-3-1-title": "1. Jeu de données expérimental",
+            "sec-3-1-p1": "Les données sont extraites des résultats de simulation couvrant un cycle de fonctionnement complet du modèle thermodynamique 1D du moteur diesel préétabli. Les échantillons sont répartis selon un ratio entraînement/test de 7:3.",
+
+            "sec-3-2-title": "2. Résultats de la simulation",
+            "sec-3-2-p1": "14 paramètres thermodynamiques présentant un potentiel significatif pour le diagnostic et l'évaluation de l'état ont été identifiés, tels que la pression du cylindre, la température du cylindre et le flux thermique de la paroi du piston.La figure ci-dessous illustre les variations de la pression du cylindre, de la température du cylindre et du flux thermique de la paroi du piston sous différents états de santé :",
+            "fig-5-caption": "Fig 5. Résultats de simulation des défaillances : (a) Pression du cylindre ; (b) Température du cylindre ; (c) Flux thermique de la paroi du piston",
+
+            "sec-4-title": "IV. Résultats de la recherche",
+            "sec-4-1-title": "1. Paramètres sélectionnés",
+            "sec-4-1-p1": "Parmi les 14 paramètres thermodynamiques initiaux, les 8 paramètres présentant l'importance la plus élevée et la pertinence la plus significative pour l'évaluation ont été retenus pour le diagnostic des défaillances, sur la base des valeurs SHAP.",
+            "fig-6-caption": "Fig 6. Importance des paramètres thermodynamiques basée sur les valeurs SHAP : (a) Carte thermique (Heatmap) des valeurs SHAP ; (b) Diagramme à barres empilées ; (c) Diagramme en pourcentage",
+            "key-param-title": "Paramètres clés de ThermoRF",
+            "param-1": "P05 (flux thermique de la paroi de la chemise)",
+            "param-2": "P14 (température d'échappement après turbine)",
+            "param-3": "P03 (flux thermique de la paroi du piston)",
+            "param-4": "P06 (flux thermique de Blow-by)",
+            "param-5": "P07 (débit massique de Blow-by)",
+            "param-6": "P11 (pression d'échappement avant turbine)",
+            "param-7": "P12 (température d'échappement avant turbine)",
+            "param-8": "P04 (flux thermique de la paroi de la culasse)",
+            "key-param-note": "*Les 8 paramètres thermodynamiques clés sélectionnés sont introduits conjointement en temps réel, permettant au modèle de réaliser un diagnostic explicable.*",
+
+            "sec-4-2-title": "2. Comparaison des performances",
+            "sec-4-2-sub1-title": "(1) Classifieurs",
+            "sec-4-2-p1": "La classification a été effectuée à l'aide d'un classifieur Random Forest (RF). Les mesures d'évaluation pour les six états de santé — incluant la précision, le rappel, le score F1 et l'exactitude — ont été comparées à celles des K-plus proches voisins (KNN) et des machines à vecteurs de support (SVM) sur le jeu de données original et le sous-ensemble optimisé. Les résultats indiquent que la RF surpasse le KNN et le SVM dans le jeu de données construit expérimentalement.",
+            "fig-7-caption": "Fig 7. Courbes Précision-Rappel (Precision-Recall) des modèles KNN, SVM et RF sur le jeu de données original (a)-(c)",
+            "sec-4-2-sub2-title": "(2) Méthodes de sélection de paramètres",
+            "sec-4-2-p2": "La méthode basée sur SHAP a été comparée aux méthodes traditionnelles telles que le test du Khi-deux (Chi-Square), l'élimination récursive de caractéristiques (RFE) et l'indice de Gini. Les résultats montrent que dans le jeu de données expérimental, l'approche SHAP a atteint une exactitude moyenne de 99,07 % avec la RF, surpassant le test du Khi-deux (78,51 %), la RFE (81,62 %) et l'indice de Gini (88,95 %).",
+
+            "sec-5-title": "V. Point fort — Explicabilité à double échelle",
+            "sec-5-p1": "Un point fort de cet article réside dans l'analyse de l'explicabilité à double échelle, rendant transparente la détermination des catégories de pannes. L'article analyse l'usure des segments de piston (F4) comme cas représentatif.",
+            "sec-5-li1": "<strong>Explication locale :</strong> Des graphiques en cascade (Waterfall plots) sont utilisés comme outil de visualisation pour analyser clairement la logique de décision du modèle pour des échantillons individuels. L'usure des segments de piston accentue le Blow-by, une loi physique intégrée au modèle. Cela entraîne des valeurs spécifiques pour le flux thermique (P06) et le débit massique (P07) du Blow-by, influençant directement l'orientation de la prédiction du modèle.",
+            "sec-5-li2": "<strong>Explication globale :</strong> Des graphiques en essaim (Beeswarm plots), des graphiques d'interaction et des graphiques de dépendance sont utilisés comme outils de visualisation pour extraire les indicateurs de surveillance clés d'un point de vue global. Le Blow-by, c'est-à-dire une fuite de gaz, entraîne une réduction de la pression d'échappement avant turbine (P11). De plus, plus le Blow-by est sévère, plus le flux thermique (P06) et le débit massique (P07) du Blow-by sont faibles. Ces trois graphiques d'explication globale révèlent cette loi physique, indiquant que ces paramètres peuvent servir d'indicateurs efficaces pour identifier l'usure des segments de piston.",
+            "fig-8-caption": "Fig 8. Analyse de la défaillance d'usure des segments (F4) basée sur les valeurs SHAP : (a) Diagramme en cascade (Waterfall plot) ; (b) Diagramme en essaim (Beeswarm plot) ; (c) Graphique d'interaction ; (d) Graphique de dépendance",
+
+            "sec-6-title": "Article de référence",
+            "footer-logo": "ThermoRF",
+            "footer-desc": "Diagnostic de pannes explicable <br>Forêt aléatoire assistée par simulation thermodynamique"
+        },
+
+        // --- Deutsch ---
+        "de": {
+            // 请参照上面的 "en" 结构，将英文翻译为德文
+        }
+    };
+
+
+    function changeLanguage(lang) {
+        document.documentElement.lang = lang;
+        const resources = translations[lang];
+        if (!resources) return;
+
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (resources[key]) {
+                el.innerHTML = resources[key];
+            }
+        });
+    }
+
+    /* 灯箱逻辑 */
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const closeBtn = document.querySelector('.lightbox-close');
-
-    // 获取页面中所有需要点击放大的图片
-    // 这里选择了 .media-container 和 .image-wrapper 下的所有 img
     const images = document.querySelectorAll('.media-container img, .image-wrapper img');
 
-    // 为每张图片添加点击事件
     images.forEach(img => {
         img.addEventListener('click', function() {
-            lightbox.style.display = 'flex'; // 显示遮罩层
-            lightboxImg.src = this.src;      // 将原图 src 赋值给灯箱图片
-            document.body.style.overflow = 'hidden'; // 禁止背景滚动
+            lightbox.style.display = 'flex';
+            lightboxImg.src = this.src;
+            document.body.style.overflow = 'hidden';
         });
     });
 
-    // 关闭灯箱的函数
     function closeLightbox() {
         lightbox.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 恢复背景滚动
+        document.body.style.overflow = 'auto';
     }
 
-    // 点击关闭按钮关闭
     closeBtn.addEventListener('click', closeLightbox);
-
-    // 点击遮罩层（图片外部）也可以关闭
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === lightbox) {
-            closeLightbox();
-        }
-    });
-
-    // 按下 ESC 键关闭
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeLightbox();
-        }
-    });
+    lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
 </script>
 </body>
 </html>
