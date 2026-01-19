@@ -706,7 +706,7 @@
             "sec-1-p1": "In the field of fault diagnosis for marine diesel engines, the primary problems are:",
             "sec-1-li1": "<strong>Data Scarcity:</strong> Marine diesel engines are among the most critical components of a vessel. Continuous condition monitoring, fault diagnosis, and preventive maintenance are central to ensuring maritime safety. Since these engines are designed for extreme reliability and longevity, major fault rates are very low. Even when failures occur, the priority is repair rather than recording data on fault evolution.",
             "sec-1-li2": "<strong>Methodological Defects:</strong> Traditional fault diagnosis methods for marine diesel engines primarily include model-based, data-driven, and hybrid methods. While each has its pros and cons, none effectively integrate sample data with physical models while providing a reasonable explanation of the feature decision-making process.",
-            "sec-1-p2": "To address these two issues, this paper proposes the ThermoRF method. Its most prominent feature is the \"model-data\" synergy: it generates extensive fault data via physical models, utilizes SHAP values for intelligent screening, and achieves high-precision explainable fault diagnosis within a Random Forest (RF) framework, leveraging the complementary advantages of data-driven approaches and physical modeling.",
+            "sec-1-p2": "To address these two issues, this paper proposes the <strong>ThermoRF</strong> method. Its most prominent feature is the <strong>\"model-data\"</>strong> synergy: it generates extensive fault data via physical models, utilizes SHAP values for intelligent screening, and achieves high-precision explainable fault diagnosis within a Random Forest (RF) framework, leveraging the complementary advantages of data-driven approaches and physical modeling.",
 
             "sec-2-title": "II. Research Methodology",
             "sec-2-1-title": "1. Thermodynamic Modeling",
@@ -728,7 +728,7 @@
 
             "sec-3-title": "III. Data and Simulation",
             "sec-3-1-title": "1. Experimental Dataset",
-            "sec-3-1-p1": "Extracted from the simulation results of a full operating cycle of the constructed 1D thermodynamic model, with a training-to-test sample ratio of 7:3.",
+            "sec-3-1-p1": "The dataset was extracted from the simulation results of a complete operating cycle of the constructed 1D thermodynamic model of a diesel engine, with a training-to-testing ratio of 7:3. This dataset covers a wide range of samples under different operating conditions, ensuring the robustness of the model training.",
 
             "sec-3-2-title": "2. Simulation Results",
             "sec-3-2-p1": "14 thermodynamic parameters with significant potential for condition assessment and diagnosis were identified, such as cylinder pressure, cylinder temperature, and piston wall heat flow.The following figure illustrates the variations in cylinder pressure, cylinder temperature, and piston wall heat flow under different health states:",
@@ -798,7 +798,7 @@
             "sec-1-p1": "Dans le domaine du diagnostic de pannes des moteurs diesel marins, les principaux problèmes sont les suivants :",
             "sec-1-li1": "<strong>Pénurie de données :</strong> Le moteur diesel marin est l'un des équipements les plus essentiels d'un navire. La surveillance continue de son état, le diagnostic de pannes et la maintenance préventive sont des enjeux cruciaux pour la sécurité de la navigation. Ces moteurs étant conçus pour une fiabilité et une longévité extrêmes, le taux de pannes majeures est très faible. Même en cas de panne, la priorité est la réparation plutôt que l'enregistrement de l'évolution des données de panne.",
             "sec-1-li2": "<strong>Défauts méthodologiques :</strong> Les méthodes traditionnelles de diagnostic de pannes pour les moteurs diesel marins comprennent principalement des approches basées sur des modèles, pilotées par les données ou hybrides. Bien que ces trois catégories présentent des avantages et des inconvénients, aucune ne parvient à fusionner les données d'échantillons avec les modèles physiques tout en expliquant de manière cohérente le processus de décision des caractéristiques.",
-            "sec-1-p2": "Pour répondre à ces deux problèmes, cet article propose la méthode ThermoRF. Sa caractéristique principale est la synergie « modèle-données » : elle génère d'abondantes données de pannes via des modèles physiques, utilise les valeurs SHAP pour un filtrage intelligent et réalise un diagnostic de pannes explicable de haute précision au sein d'une Random Forest (RF), tirant ainsi parti des avantages complémentaires de l'approche pilotée par les données et de la modélisation physique.",
+            "sec-1-p2": "Pour répondre à ces deux problèmes, cet article propose la méthode <strong>ThermoRF</strong>. Sa caractéristique principale est la synergie<strong> « modèle-données » </strong>: elle génère d'abondantes données de pannes via des modèles physiques, utilise les valeurs SHAP pour un filtrage intelligent et réalise un diagnostic de pannes explicable de haute précision au sein d'une Random Forest (RF), tirant ainsi parti des avantages complémentaires de l'approche pilotée par les données et de la modélisation physique.",
 
             "sec-2-title": "II. Méthodologie de recherche",
             "sec-2-1-title": "1. Modélisation thermodynamique",
@@ -820,7 +820,7 @@
 
             "sec-3-title": "III. Données et simulation",
             "sec-3-1-title": "1. Jeu de données expérimental",
-            "sec-3-1-p1": "Les données sont extraites des résultats de simulation couvrant un cycle de fonctionnement complet du modèle thermodynamique 1D du moteur diesel préétabli. Les échantillons sont répartis selon un ratio entraînement/test de 7:3.",
+            "sec-3-1-p1": "Les données ont été extraites des résultats de simulation d'un cycle de fonctionnement complet du modèle thermodynamique 1D élaboré pour un moteur diesel, avec un rapport entraînement/test de 7:3. Ce jeu de données couvre un large éventail d'échantillons sous différentes conditions de fonctionnement, garantissant ainsi la robustesse de l'entraînement du modèle.",
 
             "sec-3-2-title": "2. Résultats de la simulation",
             "sec-3-2-p1": "14 paramètres thermodynamiques présentant un potentiel significatif pour le diagnostic et l'évaluation de l'état ont été identifiés, tels que la pression du cylindre, la température du cylindre et le flux thermique de la paroi du piston.La figure ci-dessous illustre les variations de la pression du cylindre, de la température du cylindre et du flux thermique de la paroi du piston sous différents états de santé :",
@@ -861,7 +861,94 @@
 
         // --- Deutsch ---
         "de": {
-            // 请参照上面的 "en" 结构，将英文翻译为德文
+            "browser-title": "Erklärbare Fehlerdiagnose: thermodynamisch simulationsgestützter Random Forest",
+            "nav-title": "Navigationsleiste",
+            "nav-sec-1": "I. Forschungshintergrund",
+            "nav-sec-2": "II. Forschungsmethodik",
+            "nav-sec-2-1": "1. Thermodynamische Modellierung",
+            "nav-sec-2-2": "2. Fehlermodellierung",
+            "nav-sec-2-3": "3. Parameterselektion",
+            "nav-sec-2-4": "4. Fehleridentifikation",
+            "nav-sec-3": "III. Daten und Simulation",
+            "nav-sec-3-1": "1. Experimenteller Datensatz",
+            "nav-sec-3-2": "2. Simulationsergebnisse",
+            "nav-sec-4": "IV. Forschungsergebnisse",
+            "nav-sec-4-1": "1. Parameterselektion",
+            "nav-sec-4-2": "2. Leistungsvergleich",
+            "nav-sec-5": "V. Besonderheiten – Erklärbarkeit auf zwei Skalen",
+            "nav-sec-6": "Originalquelle",
+
+            "main-title": "<span style='color: #b71c1c;'>【Lernnotizen】</span>Erklärbare Fehlerdiagnose: thermodynamisch simulationsgestützter Random Forest",
+            "btn-fulltext":"Volltext-Link",
+            "btn-github": "GitHub-Seite der Originalautoren",
+
+            "abstract-p1": "Im Bereich der Fehlerdiagnose treten die Einschränkungen traditioneller Diagnosemethoden bei der Bewältigung zunehmend komplexer und integrierter moderner industrieller Systeme immer deutlicher zutage. Insbesondere in hochzuverlässigen Anwendungsfeldern wie dem Schienenverkehr oder der Luft- und Raumfahrt zögern Fachkräfte, einem Diagnoseergebnis ohne nachvollziehbare Ursachen zu vertrauen.",
+            "abstract-p2": "Kürzlich habe ich einen in der Zeitschrift<strong> Measurement</strong> veröffentlichten Beitrag mit dem Titel Thermodynamic simulation-assisted random forest: Towards explainable fault diagnosis of combustion chamber components of marine diesel engines gelesen. Die darin vorgestellte<strong> thermodynamisch simulationsgestützte Random-Forest-Methode (ThermoRF) </strong>schafft einen Ausgleich zwischen der Gewinnung von Trainingsdaten und der Erklärbarkeit der Diagnoseergebnisse und bietet neue Denkanstöße für meine zukünftige Forschung.",
+            "abstract-p3": "Der Hauptinhalt dieser Arbeit ist wie folgt:",
+
+            "sec-1-title": "I. Forschungshintergrund",
+            "sec-1-p1": "Im Bereich der Fehlerdiagnose von Schiffsdieselmotoren bestehen insbesondere die folgenden Probleme:",
+            "sec-1-li1": "<strong>Mangel an Daten:</strong> Schiffsdieselmotoren zählen zu den zentralen Anlagen an Bord von Schiffen. Die kontinuierliche Zustandsüberwachung, Fehlerdiagnose und präventive Instandhaltung stellen zentrale Voraussetzungen für die Gewährleistung der Navigationssicherheit in der Schifffahrtsindustrie dar.Da Schiffsdieselmotoren von vornherein auf eine äußerst hohe Zuverlässigkeit und lange Lebensdauer ausgelegt sind, treten schwerwiegende Ausfälle nur selten auf. Selbst im Fehlerfall liegt der Schwerpunkt primär auf der Instandsetzung und nicht auf der systematischen Erfassung des Fehlerentwicklungsverlaufs.",
+            "sec-1-li2": "<strong>Methodische Defizite:：</strong> Traditionelle Methoden zur Fehlerdiagnose von Schiffsdieselmotoren lassen sich im Wesentlichen in modellbasierte Ansätze, datengetriebene Ansätze sowie hybride Ansätze unterteilen. Jede dieser Methodenkategorien weist spezifische Vor- und Nachteile auf, jedoch gelingt es keiner, Stichprobendaten und physikalische Modelle effektiv zu integrieren und zugleich den Merkmalsentscheidungsprozess nachvollziehbar zu erklären.",
+            "sec-1-p2": "Zur Lösung der genannten Kernprobleme wird in dieser Arbeit die <strong>ThermoRF</strong>-Methode vorgeschlagen. Ihr wesentliches Merkmal liegt in der Synergie von <strong>„Modell und Daten“</strong>: Durch physikalische Modelle werden umfangreiche Fehlerdaten generiert, mithilfe von SHAP values intelligent selektiert und schließlich in einem Random Forest (RF) für eine hochpräzise und erklärbare Fehlerdiagnose genutzt, wodurch die komplementären Vorteile datengetriebener und physikalischer Modellierungsansätze ausgeschöpft werden.",
+
+            "sec-2-title": "II. Forschungsmethodik",
+            "sec-2-1-title": "1. Thermodynamische Modellierung",
+            "sec-2-1-p1": "Es wird ein eindimensionales thermodynamisches Modell des Dieselmotors aufgebaut, das primär zur Simulation von Fehlerzuständen sowie zur Generierung von Trainingsdaten dient.In diesem Modell werden sechs Messpunkte (MP1 bis MP6) definiert, um relevante thermodynamische Parameter zu erfassen. Durch eine nachfolgende Kalibrierung mit realen Schiffsfahrtdaten aus dem Data Collection Module (DCM) wird erreicht, dass die Abweichung der simulierten thermodynamischen Parameter von den tatsächlichen Messwerten unter 5 % liegt, was die Zuverlässigkeit des Modells bestätigt.",
+            "fig-1-caption": "Abbildung 1 Eindimensionales thermodynamisches Modell des Dieselmotors",
+            "fig-2-caption": "Abbildung 2 Datenaufnahmemodul (DCM)",
+
+            "sec-2-2-title": "2. Fehlermodellierung",
+            "sec-2-2-p1": "Auf Grundlage des aufgebauten eindimensionalen thermodynamischen Dieselmotormodells werden durch gezielte Parameteranpassungen sechs unterschiedliche Zustände der Brennraumkomponenten definiert: Normalzustand (F0), Zylinderkopfriss (F1), Kolbenabbrand (F2), Zylinderlaufbuchsenverschleiß (F3), Kolbenringverschleiß (F4) sowie Kolbenringverklebung (F5). Auf diese Weise werden hochauflösende Datensätze für fünf unterschiedliche Fehlerzustände generiert.",
+            "table-1-caption": "Tabelle 1 Details der Fehlerzustände",
+
+            "sec-2-3-title": "3. Parameterselektion",
+            "sec-2-3-p1": "Zunächst liefert das aufgebaute eindimensionale thermodynamische Dieselmotormodell 14 thermodynamische Parameter mit erheblichem Potenzial für die Zustandsbewertung und Fehlerdiagnose. Anschließend wird die Bedeutung dieser Parameter mittels SHAP values quantifiziert und priorisiert, sodass die acht wichtigsten Merkmalsparameter zu einem optimierten Teilmengen-Set zusammengefasst werden.",
+            "fig-3-caption": "Abbildung 3 SHAP-basierter Parameterselektionsprozess",
+
+            "sec-2-4-title": "4. Fehleridentifikation",
+            "sec-2-4-p1": "Die ausgewählte, auf acht thermodynamische Parameter reduzierte Merkmalsmenge wird dem Random-Forest-Klassifikator (RF) zur Fehlerdiagnose zugeführt. Das Modell zeigt auch unter Bedingungen begrenzter Stichprobengröße eine hohe Klassifikations- und Diagnoseleistung.",
+            "fig-4-caption": "Abbildung 4 Rahmenstruktur der ThermoRF-Methode",
+
+            "sec-3-title": "III. Daten und Simulation",
+            "sec-3-1-title": "1. Experimenteller Datensatz",
+            "sec-3-1-p1": "Die Daten wurden aus den Simulationsergebnissen eines vollständigen Betriebszyklus des erstellten thermodynamischen 1D-Modells eines Dieselmotors extrahiert, wobei das Verhältnis von Trainings- zu Testdaten 7:3 beträgt. Dieser Datensatz umfasst eine Vielzahl von Stichproben unter unterschiedlichen Betriebsbedingungen, wodurch die Robustheit des Modelltrainings gewährleistet wird.",
+
+            "sec-3-2-title": "2. Simulationsergebnisse",
+            "sec-3-2-p1": "Es werden 14 thermodynamische Parameter mit signifikantem Potenzial für die Zustandsbewertung und Fehlerdiagnose identifiziert, darunter Zylinderdruck, Zylindertemperatur sowie Wärmestrom an der Kolbenwand. Die folgende Abbildung zeigt die Veränderungen von Zylinderdruck, Zylindertemperatur und Kolbenwand-Wärmestrom unter unterschiedlichen Gesundheitszuständen:",
+            "fig-5-caption": "Abbildung 5 Ergebnisse der Fehlersimulation: (a) Zylinderdruck; (b) Zylindertemperatur; (c) Kolbenwand-Wärmestrom",
+
+            "sec-4-title": "IV. Forschungsergebnisse",
+            "sec-4-1-title": "1. Parameterselektion",
+            "sec-4-1-p1": "Aus den 14 thermodynamischen Parametern werden auf Basis der SHAP values die acht Parameter mit der höchsten Bedeutung und dem größten Bewertungswert für die Fehlerdiagnose ausgewählt.",
+            "fig-6-caption": "Abbildung 6 Bedeutung der thermodynamischen Parameter basierend auf SHAP values: (a) SHAP-Wärmekarte; (b) gestapeltes Balkendiagramm; (c) Prozentdarstellung",
+            "key-param-title": "Zentrale Schlüsselparameter des ThermoRF",
+            "param-1": "P14 (Abgastemperatur nach dem Turbolader)",
+            "param-2": "P14 (Abgastemperatur nach dem Turbolader)",
+            "param-3": "P03 (Wärmestrom an der Kolbenwand)",
+            "param-4": "P06 (Blow-by-Wärmestrom)",
+            "param-5": "P07 (Blow-by-Massenstrom)",
+            "param-6": "P11 (Abgasdruck vor dem Turbolader)",
+            "param-7": "P12 (Abgastemperatur vor dem Turbolader)",
+            "param-8": "P04 (Wärmestrom an der Zylinderkopfw and)",
+            "key-param-note": "*Die ausgewählten acht zentralen thermodynamischen Schlüsselparameter werden in Echtzeit gemeinsam in das Modell eingespeist und treiben die Realisierung einer erklärbaren Diagnose.*",
+
+            "sec-4-2-title": "2. Leistungsvergleich",
+            "sec-4-2-sub1-title": "(1) Klassifikatoren",
+            "sec-4-2-p1": "Auf Basis des Random-Forest-(RF)-Klassifikators werden Klassifikationsaufgaben durchgeführt und die Leistungskennzahlen für sechs Gesundheitszustände – einschließlich Precision, Recall, F1-Score und Accuracy – sowohl auf dem Originaldatensatz als auch auf dem optimierten Teilmengen-Datensatz mit denen des k-nearest-neighbors-(KNN)-Klassifikators und der Support Vector Machine (SVM) verglichen. Die Ergebnisse zeigen, dass der RF im experimentell aufgebauten Datensatz eine überlegene Leistung gegenüber KNN und SVM aufweist.",
+            "fig-7-caption": "Abbildung 7 (a)–(c) zeigen die Precision-Recall-Kurven von KNN, SVM und RF auf dem Originaldatensatz",
+            "sec-4-2-sub2-title": "(2) Methoden der Merkmalsselektion",
+            "sec-4-2-p2": "Die SHAP-basierte Methode wird mit klassischen Verfahren wie dem Chi-Quadrat-Test (Chi-Square), der rekursiven Merkmalselimination (RFE) sowie dem Gini-Index verglichen. Die Ergebnisse zeigen, dass die SHAP-basierte Methode im Random Forest auf dem experimentell aufgebauten Datensatz eine durchschnittliche Genauigkeit von 99,07 % erreicht und damit deutlich über Chi-Square (78,51 %), RFE (81,62 %) und Gini (88,95 %) liegt.",
+
+            "sec-5-title": "V. Besonderheiten – Erklärbarkeit auf zwei Skalen",
+            "sec-5-p1": "Ein zentrales Highlight dieser Arbeit liegt in der zweiskaligen Analyse der Erklärbarkeit, durch die die Zuordnung von Fehlerklassen transparent gemacht wird. Als repräsentativer Anwendungsfall wird der Kolbenringverschleiß (F4) herangezogen.",
+            "sec-5-li1": "<strong>Lokale Erklärung:</strong> Wasserfalldiagramme werden als Visualisierungswerkzeug eingesetzt, um die Entscheidungslogik des Modells für einzelne Stichproben transparent darzustellen. Der Kolbenringverschleiß verstärkt den Blow-by-Effekt – ein physikalisches Gesetz, das im Modell berücksichtigt ist –, wodurch der Blow-by-Wärmestrom (P06) und der Blow-by-Massenstrom (P07) spezifische Werte annehmen, die die Vorhersagerichtung des Modells unmittelbar beeinflussen.",
+            "sec-5-li2": "<strong>Globale Erklärung:</strong> Beeswarm-Diagramme, Interaktionsdiagramme und Abhängigkeitsdiagramme werden als Visualisierungsinstrumente genutzt, um auf globaler Ebene zentrale Überwachungskennwerte zu extrahieren. Blow-by, also Gasleckage, führt zu einem Abfall des Abgasdrucks vor dem Turbolader (P11). Gleichzeitig gilt: Je ausgeprägter der Blow-by-Effekt, desto geringer sind der Blow-by-Wärmestrom (P06) und der Blow-by-Massenstrom (P07). Die drei globalen Erklärungsdiagramme machen dieses physikalische Gesetz deutlich und zeigen, dass diese Parameter als effektive Indikatoren zur Identifikation von Kolbenringverschleiß dienen können.",
+            "fig-8-caption": "Abbildung 8 SHAP-basierte Analyse des Kolbenringverschleißes (F4): (a) Wasserfalldiagramm; (b) Beeswarm-Diagramm; (c) Interaktionsdiagramm; (d) Abhängigkeitsdiagramm",
+
+            "sec-6-title": "Originalquelle",
+            "footer-logo": "ThermoRF",
+            "footer-desc": "Erklärbare Fehlerdiagnose<br>thermodynamisch simulationsgestützter Random Forest"
         }
     };
 
