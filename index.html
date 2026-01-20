@@ -371,7 +371,8 @@
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                 全文链接
             </a>
-            <a href="https://ts-rf.github.io/zh-CN/" target="_blank" class="header-btn" data-i18n="btn-github">
+            <!-- 修改点：添加了 id="btn-github-link" -->
+            <a id="btn-github-link" href="https://ts-rf.github.io/zh-CN/" target="_blank" class="header-btn" data-i18n="btn-github">
                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 原作者 Github 页面
             </a>
@@ -537,7 +538,7 @@
              <p data-i18n="sec-5-p1">该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。</p>
             <ul>
                 <li data-i18n="sec-5-li1"><strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。</li>
-                <li data-i18n="sec-5-li2"><strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。</li>
+                <li data-i18n="sec-5-li2"><strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。</li>
             </ul>
 
             <div class="media-container">
@@ -580,11 +581,14 @@
 
 <script>
     /* =========================================
-       语言资源配置区
+       语言资源配置区 (Language Resources)
        ========================================= */
     const translations = {
-        // --- 中文 (保持不变) ---
+        // --- 中文 (Chinese) ---
         "zh-CN": {
+            // 👇👇👇 【请在此处填入 中文 Github链接】 👇👇👇
+            "url-github": "https://ts-rf.github.io/zh-CN/",
+
             "browser-title": "可解释故障诊断：热力学仿真辅助随机森林",
             "nav-title": "导航栏",
             "nav-sec-1": "一、研究背景",
@@ -667,7 +671,7 @@
             "sec-5-title": "五、亮点——双尺度可解释性",
             "sec-5-p1": "该论文的一大亮点在于对可解释性的双尺度分析，使故障类别的判定变为透明化。该论文以活塞环磨损（F4）为代表性案例进行分析。",
             "sec-5-li1": "<strong>局部解释：</strong> 采用瀑布图作为可视化工具，清晰解析模型对个体样本的决策逻辑。活塞环磨损会加剧窜气，这一物理规律已融入模型中，而这将导致窜气热流 (P06) 和窜气质量流量 (P07) 呈现特定值，直接影响模型的预测方向。",
-            "sec-5-li2": "<strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。",
+            "sec-5-li2": "<strong>全局解释：</strong> 采用蜂群图、交互图、依赖图作为可视化工具，从整体上提炼核心监测指标。窜气即气体泄漏，将导致涡轮前排气压力（P11）降低。同时，窜气越严重，窜气热流 (P06)、窜气质量流量 (P07)越低。三张全局解释图揭示了这一物理规律，这些参数均可作为识别活塞环磨损的有效指标。",
             "fig-8-caption": "图8 基于SHAP值的活塞环磨损(F4)故障分析：(a)瀑布图；(b)蜂群图；(c)交互图；(d)依赖图",
 
             "sec-6-title": "原始文献",
@@ -675,8 +679,11 @@
             "footer-desc": "可解释故障诊断<br>热力学仿真辅助随机森林"
         },
 
-        // --- English (Fixed: Quotes are now escaped) ---
+        // --- English ---
         "en": {
+            // 👇👇👇 【请在此处填入 英文 Github链接】 👇👇👇
+            "url-github": "https://ts-rf.github.io/",
+
             "browser-title": "Explainable Fault Diagnosis: Thermodynamic Simulation-Assisted Random Forest",
             "nav-title": "Navigation",
             "nav-sec-1": "I. Research Background",
@@ -706,7 +713,7 @@
             "sec-1-p1": "In the field of fault diagnosis for marine diesel engines, the primary problems are:",
             "sec-1-li1": "<strong>Data Scarcity:</strong> Marine diesel engines are among the most critical components of a vessel. Continuous condition monitoring, fault diagnosis, and preventive maintenance are central to ensuring maritime safety. Since these engines are designed for extreme reliability and longevity, major fault rates are very low. Even when failures occur, the priority is repair rather than recording data on fault evolution.",
             "sec-1-li2": "<strong>Methodological Defects:</strong> Traditional fault diagnosis methods for marine diesel engines primarily include model-based, data-driven, and hybrid methods. While each has its pros and cons, none effectively integrate sample data with physical models while providing a reasonable explanation of the feature decision-making process.",
-            "sec-1-p2": "To address these two issues, this paper proposes the <strong>ThermoRF</strong> method. Its most prominent feature is the <strong>\"model-data\"</>strong> synergy: it generates extensive fault data via physical models, utilizes SHAP values for intelligent screening, and achieves high-precision explainable fault diagnosis within a Random Forest (RF) framework, leveraging the complementary advantages of data-driven approaches and physical modeling.",
+            "sec-1-p2": "To address these two issues, this paper proposes the <strong>ThermoRF</strong> method. Its most prominent feature is the <strong>\"model-data\"</strong> synergy: it generates extensive fault data via physical models, utilizes SHAP values for intelligent screening, and achieves high-precision explainable fault diagnosis within a Random Forest (RF) framework, leveraging the complementary advantages of data-driven approaches and physical modeling.",
 
             "sec-2-title": "II. Research Methodology",
             "sec-2-1-title": "1. Thermodynamic Modeling",
@@ -769,6 +776,9 @@
 
         // --- Français ---
         "fr": {
+            // 👇👇👇 【请在此处填入 法文 Github链接】 👇👇👇
+            "url-github": "https://ts-rf.github.io/fr/",
+
             "browser-title": "Diagnostic de pannes explicable : Forêt aléatoire assistée par simulation thermodynamique",
             "nav-title": "Barre de navigation",
             "nav-sec-1": "I. Contexte de la recherche",
@@ -861,6 +871,9 @@
 
         // --- Deutsch ---
         "de": {
+            // 👇👇👇 【请在此处填入 德文 Github链接】 👇👇👇
+            "url-github": "https://ts-rf.github.io/de/",
+
             "browser-title": "Erklärbare Fehlerdiagnose: thermodynamisch simulationsgestützter Random Forest",
             "nav-title": "Navigationsleiste",
             "nav-sec-1": "I. Forschungshintergrund",
@@ -894,7 +907,7 @@
 
             "sec-2-title": "II. Forschungsmethodik",
             "sec-2-1-title": "1. Thermodynamische Modellierung",
-            "sec-2-1-p1": "Es wird ein eindimensionales thermodynamisches Modell des Dieselmotors aufgebaut, das primär zur Simulation von Fehlerzuständen sowie zur Generierung von Trainingsdaten dient.In diesem Modell werden sechs Messpunkte (MP1 bis MP6) definiert, um relevante thermodynamische Parameter zu erfassen. Durch eine nachfolgende Kalibrierung mit realen Schiffsfahrtdaten aus dem Data Collection Module (DCM) wird erreicht, dass die Abweichung der simulierten thermodynamischen Parameter von den tatsächlichen Messwerten unter 5 % liegt, was die Zuverlässigkeit des Modells bestätigt.",
+            "sec-2-1-p1": "Es wird ein eindimensionales thermodynamisches Modell des Dieselmotors aufgebaut, das primär zur Simulation von Fehlerzuständen sowie zur Generierung von Trainingsdaten dient.In diesem Modell werden sechs Messpunkte (MP1 bis MP6) definiert, um relevante thermodynamische Parameter zu erfassen. Durch eine nachfolgende Kalibrierung mit realen Schiffsfahrtdaten aus dem Data Collection Module (DCM), wird erreicht, dass die Abweichung der simulierten thermodynamischen Parameter von den tatsächlichen Messwerten unter 5 % liegt, was die Zuverlässigkeit des Modells bestätigt.",
             "fig-1-caption": "Abbildung 1 Eindimensionales thermodynamisches Modell des Dieselmotors",
             "fig-2-caption": "Abbildung 2 Datenaufnahmemodul (DCM)",
 
@@ -930,7 +943,7 @@
             "param-5": "P07 (Blow-by-Massenstrom)",
             "param-6": "P11 (Abgasdruck vor dem Turbolader)",
             "param-7": "P12 (Abgastemperatur vor dem Turbolader)",
-            "param-8": "P04 (Wärmestrom an der Zylinderkopfw and)",
+            "param-8": "P04 (Wärmestrom an der Zylinderkopfwand)",
             "key-param-note": "*Die ausgewählten acht zentralen thermodynamischen Schlüsselparameter werden in Echtzeit gemeinsam in das Modell eingespeist und treiben die Realisierung einer erklärbaren Diagnose.*",
 
             "sec-4-2-title": "2. Leistungsvergleich",
@@ -938,7 +951,7 @@
             "sec-4-2-p1": "Auf Basis des Random-Forest-(RF)-Klassifikators werden Klassifikationsaufgaben durchgeführt und die Leistungskennzahlen für sechs Gesundheitszustände – einschließlich Precision, Recall, F1-Score und Accuracy – sowohl auf dem Originaldatensatz als auch auf dem optimierten Teilmengen-Datensatz mit denen des k-nearest-neighbors-(KNN)-Klassifikators und der Support Vector Machine (SVM) verglichen. Die Ergebnisse zeigen, dass der RF im experimentell aufgebauten Datensatz eine überlegene Leistung gegenüber KNN und SVM aufweist.",
             "fig-7-caption": "Abbildung 7 (a)–(c) zeigen die Precision-Recall-Kurven von KNN, SVM und RF auf dem Originaldatensatz",
             "sec-4-2-sub2-title": "(2) Methoden der Merkmalsselektion",
-            "sec-4-2-p2": "Die SHAP-basierte Methode wird mit klassischen Verfahren wie dem Chi-Quadrat-Test (Chi-Square), der rekursiven Merkmalselimination (RFE) sowie dem Gini-Index verglichen. Die Ergebnisse zeigen, dass die SHAP-basierte Methode im Random Forest auf dem experimentell aufgebauten Datensatz eine durchschnittliche Genauigkeit von 99,07 % erreicht und damit deutlich über Chi-Square (78,51 %), RFE (81,62 %) und Gini (88,95 %) liegt.",
+            "sec-4-2-p2": "Die SHAP-basierte Methode wird mit klassischen Verfahren wie dem Chi-Quadrat-Test (Chi-Square), der rekursiven Merkmalselimination (RFE) sowie dem Gini-Index verglichen. Die Ergebnisse zeigen, dass die SHAP-basierte Methode im Random Forest auf dem experimentell aufgebauten Datensatz eine durchschnittliche Genauigkeit von 99,07 % erreicht und damit deutlich über Chi-Square (78,51 %), RFE (81,62 %) und Gini (88,95 %).",
 
             "sec-5-title": "V. Besonderheiten – Erklärbarkeit auf zwei Skalen",
             "sec-5-p1": "Ein zentrales Highlight dieser Arbeit liegt in der zweiskaligen Analyse der Erklärbarkeit, durch die die Zuordnung von Fehlerklassen transparent gemacht wird. Als repräsentativer Anwendungsfall wird der Kolbenringverschleiß (F4) herangezogen.",
@@ -956,8 +969,12 @@
     function changeLanguage(lang) {
         document.documentElement.lang = lang;
         const resources = translations[lang];
-        if (!resources) return;
+        if (!resources) {
+            console.error("No resources found for lang: " + lang);
+            return;
+        }
 
+        // 1. 更新所有文本
         const elements = document.querySelectorAll('[data-i18n]');
         elements.forEach(el => {
             const key = el.getAttribute('data-i18n');
@@ -965,6 +982,13 @@
                 el.innerHTML = resources[key];
             }
         });
+
+        // 2. 更新“原作者Github页面”按钮的跳转地址
+        const githubBtn = document.getElementById('btn-github-link');
+        // 确保按钮存在且资源中存在链接才更新
+        if (githubBtn && resources['url-github']) {
+            githubBtn.href = resources['url-github'];
+        }
     }
 
     /* 灯箱逻辑 */
@@ -973,21 +997,23 @@
     const closeBtn = document.querySelector('.lightbox-close');
     const images = document.querySelectorAll('.media-container img, .image-wrapper img');
 
-    images.forEach(img => {
-        img.addEventListener('click', function() {
-            lightbox.style.display = 'flex';
-            lightboxImg.src = this.src;
-            document.body.style.overflow = 'hidden';
+    if (images.length > 0) {
+        images.forEach(img => {
+            img.addEventListener('click', function() {
+                lightbox.style.display = 'flex';
+                lightboxImg.src = this.src;
+                document.body.style.overflow = 'hidden';
+            });
         });
-    });
+    }
 
     function closeLightbox() {
         lightbox.style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    closeBtn.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (lightbox) lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
 </script>
 </body>
